@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(flutter pub *)",
+      "Bash(flutter test *)",
+      "Bash(npx @openapitools/openapi-generator-cli generate -i \"C:/DesarrolloWeb/MasterColor/master_color_api/docs/openapi/support-api.yaml\" -g dart-dio -o lib/api --additional-properties=pubName=mastercolor_api,nullableFields=true)",
+      "Bash(npx @openapitools/openapi-generator-cli generate -i \"C:/DesarrolloWeb/MasterColor/master_color_api/docs/openapi/support-api.yaml\" -g dart-dio -o packages/mastercolor_api --additional-properties=pubName=mastercolor_api,serializationLibrary=json_serializable)"
+    ]
+  }
+}
