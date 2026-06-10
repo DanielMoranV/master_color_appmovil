@@ -65,9 +65,14 @@ class ApiClient {
     ErrorInterceptorHandler handler,
   ) async {
     final isAuthError = err.response?.statusCode == 401;
-    final isRefreshCall = err.requestOptions.path.contains('/auth/refresh');
+    // Login/refresh/logout no deben disparar el refresco: un 401 ahí es una
+    // credencial inválida o una sesión ya expirada, no un token caducado.
+    final path = err.requestOptions.path;
+    final isAuthEndpoint = path.contains('/auth/login') ||
+        path.contains('/auth/refresh') ||
+        path.contains('/auth/logout');
 
-    if (isAuthError && !isRefreshCall && onRefresh != null && !_isRefreshing) {
+    if (isAuthError && !isAuthEndpoint && onRefresh != null && !_isRefreshing) {
       _isRefreshing = true;
       try {
         final refreshed = await onRefresh!.call();

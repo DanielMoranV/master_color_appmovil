@@ -29,6 +29,8 @@ class SoldUnit {
 
      this.productName,
 
+     this.imageUrl,
+
      this.orderId,
 
      this.serialNumber,
@@ -93,6 +95,19 @@ class SoldUnit {
 
 
   final String? productName;
+
+
+
+      /// URL absoluta de la imagen del producto asociado. null si no tiene.
+  @JsonKey(
+    
+    name: r'image_url',
+    required: false,
+    includeIfNull: false,
+  )
+
+
+  final String? imageUrl;
 
 
 
@@ -213,6 +228,7 @@ class SoldUnit {
       other.clientId == clientId &&
       other.productId == productId &&
       other.productName == productName &&
+      other.imageUrl == imageUrl &&
       other.orderId == orderId &&
       other.serialNumber == serialNumber &&
       other.purchaseDate == purchaseDate &&
@@ -229,6 +245,7 @@ class SoldUnit {
         clientId.hashCode +
         productId.hashCode +
         productName.hashCode +
+        imageUrl.hashCode +
         orderId.hashCode +
         serialNumber.hashCode +
         purchaseDate.hashCode +

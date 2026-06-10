@@ -4,6 +4,7 @@
 
 // ignore_for_file: unused_element
 import 'package:mastercolor_api/src/model/sold_unit.dart';
+import 'package:mastercolor_api/src/model/pagination.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -30,6 +31,8 @@ class ClientUnitsGet200Response {
      this.data,
 
      this.errors,
+
+     this.pagination,
   });
 
   @JsonKey(
@@ -92,6 +95,18 @@ class ClientUnitsGet200Response {
 
 
 
+  @JsonKey(
+    
+    name: r'pagination',
+    required: false,
+    includeIfNull: false,
+  )
+
+
+  final Pagination? pagination;
+
+
+
 
 
     @override
@@ -100,7 +115,8 @@ class ClientUnitsGet200Response {
       other.message == message &&
       other.status == status &&
       other.data == data &&
-      other.errors == errors;
+      other.errors == errors &&
+      other.pagination == pagination;
 
     @override
     int get hashCode =>
@@ -108,7 +124,8 @@ class ClientUnitsGet200Response {
         message.hashCode +
         status.hashCode +
         data.hashCode +
-        (errors == null ? 0 : errors.hashCode);
+        (errors == null ? 0 : errors.hashCode) +
+        pagination.hashCode;
 
   factory ClientUnitsGet200Response.fromJson(Map<String, dynamic> json) => _$ClientUnitsGet200ResponseFromJson(json);
 

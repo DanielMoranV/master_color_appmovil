@@ -12,6 +12,7 @@ Name | Type | Description | Notes
 **clientId** | **int** |  | [optional] 
 **productId** | **int** |  | [optional] 
 **productName** | **String** |  | [optional] 
+**imageUrl** | **String** | URL absoluta de la imagen del producto asociado. null si no tiene. | [optional] 
 **orderId** | **int** |  | [optional] 
 **serialNumber** | **String** | Opcional (productos no serializados). | [optional] 
 **purchaseDate** | [**DateTime**](DateTime.md) |  | [optional] 

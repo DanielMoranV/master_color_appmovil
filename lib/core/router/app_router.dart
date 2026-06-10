@@ -5,8 +5,14 @@ import 'package:go_router/go_router.dart';
 import '../auth/auth_controller.dart';
 import '../../features/auth/login_screen.dart';
 import '../../features/metrics/metrics_screen.dart';
+import '../../features/tickets/create_ticket_screen.dart';
+import '../../features/tickets/ticket_detail_screen.dart';
 import '../../features/tickets/tickets_screen.dart';
+import '../../features/units/register_unit_screen.dart';
+import '../../features/units/unit_detail_screen.dart';
 import '../../features/units/units_screen.dart';
+import '../../features/staff_units/staff_units_screen.dart';
+import '../../features/staff_units/staff_unit_detail_screen.dart';
 import '../../shared/widgets/splash_screen.dart';
 
 /// Router gateado por rol (go_router). Redirige según el [AuthState]:
@@ -53,10 +59,45 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/login', builder: (_, _) => const LoginScreen()),
       // Área cliente
       GoRoute(path: '/client', builder: (_, _) => const UnitsScreen()),
+      GoRoute(
+        path: '/client/units/new',
+        builder: (_, _) => const RegisterUnitScreen(),
+      ),
+      GoRoute(
+        path: '/client/units/:id',
+        builder: (_, state) => UnitDetailScreen(
+          unitId: int.parse(state.pathParameters['id']!),
+        ),
+      ),
       GoRoute(path: '/client/tickets', builder: (_, _) => const TicketsScreen()),
+      GoRoute(
+        path: '/client/tickets/new',
+        builder: (_, state) => CreateTicketScreen(
+          soldUnitId: int.tryParse(state.uri.queryParameters['unitId'] ?? ''),
+        ),
+      ),
+      GoRoute(
+        path: '/client/tickets/:id',
+        builder: (_, state) => TicketDetailScreen(
+          ticketId: int.parse(state.pathParameters['id']!),
+        ),
+      ),
       // Área técnico/staff
       GoRoute(path: '/staff', builder: (_, _) => const MetricsScreen()),
       GoRoute(path: '/staff/tickets', builder: (_, _) => const TicketsScreen()),
+      GoRoute(
+        path: '/staff/tickets/:id',
+        builder: (_, state) => TicketDetailScreen(
+          ticketId: int.parse(state.pathParameters['id']!),
+        ),
+      ),
+      GoRoute(path: '/staff/units', builder: (_, _) => const StaffUnitsScreen()),
+      GoRoute(
+        path: '/staff/units/:id',
+        builder: (_, state) => StaffUnitDetailScreen(
+          unitId: int.parse(state.pathParameters['id']!),
+        ),
+      ),
     ],
   );
 });

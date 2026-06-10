@@ -15,6 +15,8 @@ abstract class _$SoldUnitCWProxy {
 
   SoldUnit productName(String? productName);
 
+  SoldUnit imageUrl(String? imageUrl);
+
   SoldUnit orderId(int? orderId);
 
   SoldUnit serialNumber(String? serialNumber);
@@ -46,6 +48,7 @@ abstract class _$SoldUnitCWProxy {
     int? clientId,
     int? productId,
     String? productName,
+    String? imageUrl,
     int? orderId,
     String? serialNumber,
     DateTime? purchaseDate,
@@ -75,6 +78,9 @@ class _$SoldUnitCWProxyImpl implements _$SoldUnitCWProxy {
 
   @override
   SoldUnit productName(String? productName) => this(productName: productName);
+
+  @override
+  SoldUnit imageUrl(String? imageUrl) => this(imageUrl: imageUrl);
 
   @override
   SoldUnit orderId(int? orderId) => this(orderId: orderId);
@@ -122,6 +128,7 @@ class _$SoldUnitCWProxyImpl implements _$SoldUnitCWProxy {
     Object? clientId = const $CopyWithPlaceholder(),
     Object? productId = const $CopyWithPlaceholder(),
     Object? productName = const $CopyWithPlaceholder(),
+    Object? imageUrl = const $CopyWithPlaceholder(),
     Object? orderId = const $CopyWithPlaceholder(),
     Object? serialNumber = const $CopyWithPlaceholder(),
     Object? purchaseDate = const $CopyWithPlaceholder(),
@@ -149,6 +156,10 @@ class _$SoldUnitCWProxyImpl implements _$SoldUnitCWProxy {
           ? _value.productName
           // ignore: cast_nullable_to_non_nullable
           : productName as String?,
+      imageUrl: imageUrl == const $CopyWithPlaceholder()
+          ? _value.imageUrl
+          // ignore: cast_nullable_to_non_nullable
+          : imageUrl as String?,
       orderId: orderId == const $CopyWithPlaceholder()
           ? _value.orderId
           // ignore: cast_nullable_to_non_nullable
@@ -208,6 +219,7 @@ SoldUnit _$SoldUnitFromJson(Map<String, dynamic> json) => $checkedCreate(
       clientId: $checkedConvert('client_id', (v) => (v as num?)?.toInt()),
       productId: $checkedConvert('product_id', (v) => (v as num?)?.toInt()),
       productName: $checkedConvert('product_name', (v) => v as String?),
+      imageUrl: $checkedConvert('image_url', (v) => v as String?),
       orderId: $checkedConvert('order_id', (v) => (v as num?)?.toInt()),
       serialNumber: $checkedConvert('serial_number', (v) => v as String?),
       purchaseDate: $checkedConvert(
@@ -242,6 +254,7 @@ SoldUnit _$SoldUnitFromJson(Map<String, dynamic> json) => $checkedCreate(
     'clientId': 'client_id',
     'productId': 'product_id',
     'productName': 'product_name',
+    'imageUrl': 'image_url',
     'orderId': 'order_id',
     'serialNumber': 'serial_number',
     'purchaseDate': 'purchase_date',
@@ -258,6 +271,7 @@ Map<String, dynamic> _$SoldUnitToJson(SoldUnit instance) => <String, dynamic>{
   'client_id': ?instance.clientId,
   'product_id': ?instance.productId,
   'product_name': ?instance.productName,
+  'image_url': ?instance.imageUrl,
   'order_id': ?instance.orderId,
   'serial_number': ?instance.serialNumber,
   'purchase_date': ?instance.purchaseDate?.toIso8601String(),

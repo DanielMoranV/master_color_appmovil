@@ -4,7 +4,18 @@
       "Bash(flutter pub *)",
       "Bash(flutter test *)",
       "Bash(npx @openapitools/openapi-generator-cli generate -i \"C:/DesarrolloWeb/MasterColor/master_color_api/docs/openapi/support-api.yaml\" -g dart-dio -o lib/api --additional-properties=pubName=mastercolor_api,nullableFields=true)",
-      "Bash(npx @openapitools/openapi-generator-cli generate -i \"C:/DesarrolloWeb/MasterColor/master_color_api/docs/openapi/support-api.yaml\" -g dart-dio -o packages/mastercolor_api --additional-properties=pubName=mastercolor_api,serializationLibrary=json_serializable)"
+      "Bash(npx @openapitools/openapi-generator-cli generate -i \"C:/DesarrolloWeb/MasterColor/master_color_api/docs/openapi/support-api.yaml\" -g dart-dio -o packages/mastercolor_api --additional-properties=pubName=mastercolor_api,serializationLibrary=json_serializable)",
+      "Bash(flutter --version)",
+      "Bash(flutter analyze *)",
+      "Bash(npx @openapitools/openapi-generator-cli generate -i ../master_color_api/docs/openapi/support-api.yaml -g dart-dio -o packages/mastercolor_api --additional-properties=pubName=mastercolor_api,serializationLibrary=json_serializable)",
+      "Bash(flutter emulators *)",
+      "Bash(flutter config *)",
+      "Bash(curl -s -X POST https://mc-api.djasoft.net.pe/api/client/auth/login -H 'Content-Type: application/json' -H 'Accept: application/json' -d '{\"email\":\"noexiste@test.com\",\"password\":\"malaclave\"}' -w '\\\\n[HTTP %{http_code}]\\\\n')",
+      "Bash(curl -s -X POST https://mc-api.djasoft.net.pe/api/auth/login -H 'Content-Type: application/json' -H 'Accept: application/json' -d '{\"email\":\"noexiste@test.com\",\"password\":\"malaclave\"}' -w '\\\\n[HTTP %{http_code}]\\\\n')",
+      "Bash(~/Android/Sdk/emulator/emulator *)",
+      "Bash(~/Android/Sdk/platform-tools/adb get-state *)",
+      "Read(//home/maeldev/Code/appMasterColor/**)",
+      "Bash(sed -n '1,80p' master_color_api/app/Http/Resources/SupportTicketResource.php)"
     ]
   }
 }

@@ -1,7 +1,7 @@
 /// Configuración por entorno (flavors).
 ///
-/// Sobrescribe la base URL al ejecutar:
-///   flutter run --dart-define=API_BASE_URL=https://api.mastercolor.example/api
+/// Por defecto apunta al backend desplegado. Para apuntar a uno local:
+///   flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8000/api
 ///
 /// Nota: en el emulador de Android, `localhost` del host es `10.0.2.2`.
 class Env {
@@ -9,6 +9,6 @@ class Env {
 
   static const String baseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'http://localhost:8000/api',
+    defaultValue: 'https://mc-api.djasoft.net.pe/api',
   );
 }

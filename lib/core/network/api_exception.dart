@@ -14,6 +14,17 @@ class ApiException implements Exception {
   bool get isUnauthorized => statusCode == 401;
   bool get isValidation => statusCode == 422;
 
+  /// Mensaje listo para la UI: el primer error de validación si lo hay, o el
+  /// mensaje general. Nunca incluye detalles técnicos como el código.
+  String get displayMessage {
+    final errs = errors;
+    if (errs != null && errs.isNotEmpty) {
+      final first = errs.values.first;
+      if (first.isNotEmpty) return first.first;
+    }
+    return message;
+  }
+
   /// Construye la excepción a partir de un [DioException].
   factory ApiException.fromDio(DioException e) {
     final response = e.response;
@@ -35,9 +46,13 @@ class ApiException implements Exception {
           ),
         );
       }
-    } else if (e.type == DioExceptionType.connectionTimeout ||
-        e.type == DioExceptionType.connectionError) {
-      message = 'No se pudo conectar con el servidor.';
+    } else if (response == null) {
+      // Sin respuesta HTTP: timeout, DNS, TLS o un corte de conexión que Dio
+      // envuelve como `unknown` (p. ej. SocketException/HttpException
+      // "Software caused connection abort"). Todos son fallos de transporte.
+      message = e.type == DioExceptionType.cancel
+          ? 'La operación fue cancelada.'
+          : 'No se pudo conectar con el servidor.';
     }
 
     return ApiException(

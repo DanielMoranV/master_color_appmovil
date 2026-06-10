@@ -17,6 +17,8 @@ abstract class _$ClientUnitsGet200ResponseCWProxy {
 
   ClientUnitsGet200Response errors(Object? errors);
 
+  ClientUnitsGet200Response pagination(Pagination? pagination);
+
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `ClientUnitsGet200Response(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -29,6 +31,7 @@ abstract class _$ClientUnitsGet200ResponseCWProxy {
     int? status,
     List<SoldUnit>? data,
     Object? errors,
+    Pagination? pagination,
   });
 }
 
@@ -55,6 +58,10 @@ class _$ClientUnitsGet200ResponseCWProxyImpl
   ClientUnitsGet200Response errors(Object? errors) => this(errors: errors);
 
   @override
+  ClientUnitsGet200Response pagination(Pagination? pagination) =>
+      this(pagination: pagination);
+
+  @override
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `ClientUnitsGet200Response(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -67,6 +74,7 @@ class _$ClientUnitsGet200ResponseCWProxyImpl
     Object? status = const $CopyWithPlaceholder(),
     Object? data = const $CopyWithPlaceholder(),
     Object? errors = const $CopyWithPlaceholder(),
+    Object? pagination = const $CopyWithPlaceholder(),
   }) {
     return ClientUnitsGet200Response(
       success: success == const $CopyWithPlaceholder()
@@ -89,6 +97,10 @@ class _$ClientUnitsGet200ResponseCWProxyImpl
           ? _value.errors
           // ignore: cast_nullable_to_non_nullable
           : errors as Object?,
+      pagination: pagination == const $CopyWithPlaceholder()
+          ? _value.pagination
+          // ignore: cast_nullable_to_non_nullable
+          : pagination as Pagination?,
     );
   }
 }
@@ -118,6 +130,10 @@ ClientUnitsGet200Response _$ClientUnitsGet200ResponseFromJson(
           .toList(),
     ),
     errors: $checkedConvert('errors', (v) => v),
+    pagination: $checkedConvert(
+      'pagination',
+      (v) => v == null ? null : Pagination.fromJson(v as Map<String, dynamic>),
+    ),
   );
   return val;
 });
@@ -130,4 +146,5 @@ Map<String, dynamic> _$ClientUnitsGet200ResponseToJson(
   'status': ?instance.status,
   'data': ?instance.data?.map((e) => e.toJson()).toList(),
   'errors': ?instance.errors,
+  'pagination': ?instance.pagination?.toJson(),
 };

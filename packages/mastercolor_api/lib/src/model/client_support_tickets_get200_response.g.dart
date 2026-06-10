@@ -17,6 +17,8 @@ abstract class _$ClientSupportTicketsGet200ResponseCWProxy {
 
   ClientSupportTicketsGet200Response errors(Object? errors);
 
+  ClientSupportTicketsGet200Response pagination(Pagination? pagination);
+
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `ClientSupportTicketsGet200Response(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -29,6 +31,7 @@ abstract class _$ClientSupportTicketsGet200ResponseCWProxy {
     int? status,
     List<SupportTicket>? data,
     Object? errors,
+    Pagination? pagination,
   });
 }
 
@@ -60,6 +63,10 @@ class _$ClientSupportTicketsGet200ResponseCWProxyImpl
       this(errors: errors);
 
   @override
+  ClientSupportTicketsGet200Response pagination(Pagination? pagination) =>
+      this(pagination: pagination);
+
+  @override
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `ClientSupportTicketsGet200Response(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -72,6 +79,7 @@ class _$ClientSupportTicketsGet200ResponseCWProxyImpl
     Object? status = const $CopyWithPlaceholder(),
     Object? data = const $CopyWithPlaceholder(),
     Object? errors = const $CopyWithPlaceholder(),
+    Object? pagination = const $CopyWithPlaceholder(),
   }) {
     return ClientSupportTicketsGet200Response(
       success: success == const $CopyWithPlaceholder()
@@ -94,6 +102,10 @@ class _$ClientSupportTicketsGet200ResponseCWProxyImpl
           ? _value.errors
           // ignore: cast_nullable_to_non_nullable
           : errors as Object?,
+      pagination: pagination == const $CopyWithPlaceholder()
+          ? _value.pagination
+          // ignore: cast_nullable_to_non_nullable
+          : pagination as Pagination?,
     );
   }
 }
@@ -126,6 +138,10 @@ ClientSupportTicketsGet200Response _$ClientSupportTicketsGet200ResponseFromJson(
           .toList(),
     ),
     errors: $checkedConvert('errors', (v) => v),
+    pagination: $checkedConvert(
+      'pagination',
+      (v) => v == null ? null : Pagination.fromJson(v as Map<String, dynamic>),
+    ),
   );
   return val;
 });
@@ -138,4 +154,5 @@ Map<String, dynamic> _$ClientSupportTicketsGet200ResponseToJson(
   'status': ?instance.status,
   'data': ?instance.data?.map((e) => e.toJson()).toList(),
   'errors': ?instance.errors,
+  'pagination': ?instance.pagination?.toJson(),
 };

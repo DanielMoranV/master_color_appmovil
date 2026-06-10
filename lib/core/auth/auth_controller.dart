@@ -79,3 +79,10 @@ class AuthController extends Notifier<AuthState> {
 
 final authControllerProvider =
     NotifierProvider<AuthController, AuthState>(AuthController.new);
+
+/// Rol de la sesión activa, o null si no hay sesión autenticada.
+/// Útil para las features role-aware (p. ej. tickets).
+final currentRoleProvider = Provider<UserRole?>((ref) {
+  final auth = ref.watch(authControllerProvider);
+  return auth is AuthAuthenticated ? auth.session.role : null;
+});

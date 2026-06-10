@@ -1,50 +1,94 @@
-import '../auth/session.dart';
-import '../network/api_client.dart';
+import 'dart:async';
 
-/// Registro de token push y manejo de notificaciones (FCM).
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
+
+/// Handler de mensajes en segundo plano. Debe ser una función top-level
+/// (se ejecuta en un isolate aparte). Protegida: si Firebase no está
+/// configurado, simplemente no hace nada.
+@pragma('vm:entry-point')
+Future<void> firebaseBackgroundHandler(RemoteMessage message) async {
+  try {
+    await Firebase.initializeApp();
+  } catch (_) {
+    // Firebase no configurado: nada que hacer en background.
+  }
+  // El sistema ya muestra la notificación cuando trae payload `notification`.
+}
+
+/// Envoltura sobre Firebase Messaging.
 ///
-/// STUB: la integración con Firebase Messaging es un paso aparte que requiere
-/// `flutterfire configure` + los archivos de configuración (google-services.json
-/// / GoogleService-Info.plist). Mientras tanto este servicio define el contrato.
+/// **Guarda segura:** si el proyecto Firebase aún no está configurado
+/// (`flutterfire configure` pendiente), `initialize()` falla de forma
+/// controlada, [isAvailable] queda en `false` y el resto de la app sigue
+/// funcionando con normalidad. Cuando se añadan los archivos de configuración
+/// nativos, la integración se activa sin cambios de código.
 ///
-/// Flujo previsto (ver docs/flutter/KICKOFF.md §7):
-///  1. Tras login: pedir permiso y obtener el token FCM.
-///  2. Registrarlo: cliente `POST /client/devices`, staff `POST /support/devices`.
-///  3. Escuchar `onTokenRefresh` -> re-registrar.
-///  4. En logout: `DELETE /client/devices/{token}` (o `/support/devices/{token}`).
-///
-/// Payload `data` del backend para deep-link:
-///   { "ticket_id": "123", "type": "ticket_status|ticket_message|ticket_assigned" }
+/// Tipos de `data.type` que envía el backend: `ticket_status`,
+/// `ticket_message`, `ticket_assigned`; con `ticket_id` para el deep-link.
 class PushService {
-  PushService(this._api);
+  PushService();
 
-  final ApiClient _api;
+  bool _available = false;
+  bool get isAvailable => _available;
 
-  String _devicesPath(UserRole role) =>
-      role == UserRole.client ? '/client/devices' : '/support/devices';
+  FirebaseMessaging? _messaging;
 
-  /// Registra el token FCM en el backend para el rol activo.
-  Future<void> registerToken({
-    required UserRole role,
-    required String token,
-    required String platform, // 'android' | 'ios'
-  }) async {
-    await _api.post<void>(
-      _devicesPath(role),
-      body: {'token': token, 'platform': platform},
+  /// Inicializa Firebase + Messaging y pide permisos. Devuelve el token FCM
+  /// actual, o `null` si Firebase no está disponible o se denegó el permiso.
+  Future<String?> initialize() async {
+    try {
+      await Firebase.initializeApp();
+    } catch (e) {
+      _available = false;
+      if (kDebugMode) {
+        debugPrint('PushService: Firebase no configurado, push deshabilitado ($e).');
+      }
+      return null;
+    }
+
+    _available = true;
+    final messaging = _messaging = FirebaseMessaging.instance;
+    FirebaseMessaging.onBackgroundMessage(firebaseBackgroundHandler);
+
+    final settings = await messaging.requestPermission();
+    if (settings.authorizationStatus == AuthorizationStatus.denied) {
+      return null;
+    }
+
+    // En iOS, mostrar la notificación también en primer plano.
+    await messaging.setForegroundNotificationPresentationOptions(
+      alert: true,
+      badge: true,
+      sound: true,
     );
+
+    try {
+      return await messaging.getToken();
+    } catch (e) {
+      if (kDebugMode) debugPrint('PushService: getToken falló ($e).');
+      return null;
+    }
   }
 
-  /// Elimina el token al cerrar sesión.
-  Future<void> unregisterToken({
-    required UserRole role,
-    required String token,
-  }) async {
-    await _api.delete<void>('${_devicesPath(role)}/$token');
-  }
+  /// Emite el nuevo token cada vez que Firebase lo rota.
+  Stream<String> get onTokenRefresh =>
+      _messaging?.onTokenRefresh ?? const Stream.empty();
 
-  // TODO(push): inicializar Firebase, pedir permisos, getToken(),
-  // onTokenRefresh, onMessage / onMessageOpenedApp / getInitialMessage.
+  /// Mensajes recibidos con la app en primer plano.
+  Stream<RemoteMessage> get onForegroundMessage =>
+      _available ? FirebaseMessaging.onMessage : const Stream.empty();
+
+  /// Mensajes que abrieron la app (tap en la notificación, app en background).
+  Stream<RemoteMessage> get onMessageOpenedApp =>
+      _available ? FirebaseMessaging.onMessageOpenedApp : const Stream.empty();
+
+  /// Mensaje que abrió la app desde estado terminado (cold start), o null.
+  Future<RemoteMessage?> initialMessage() async {
+    if (!_available) return null;
+    return _messaging?.getInitialMessage();
+  }
 }
 
 /// Tipos de notificación que envía el backend (campo `data.type`).

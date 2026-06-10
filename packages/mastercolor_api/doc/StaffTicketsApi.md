@@ -11,6 +11,7 @@ Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**supportTicketsGet**](StaffTicketsApi.md#supportticketsget) | **GET** /support/tickets | Listar/filtrar tickets (cola de soporte)
 [**supportTicketsIdAssignPatch**](StaffTicketsApi.md#supportticketsidassignpatch) | **PATCH** /support/tickets/{id}/assign | Asignar el ticket a un técnico
+[**supportTicketsIdAttachmentsPost**](StaffTicketsApi.md#supportticketsidattachmentspost) | **POST** /support/tickets/{id}/attachments | Adjuntar evidencia al ticket (foto de diagnóstico, etc.)
 [**supportTicketsIdDiagnosisPost**](StaffTicketsApi.md#supportticketsiddiagnosispost) | **POST** /support/tickets/{id}/diagnosis | Registrar diagnóstico técnico y cierre de servicio
 [**supportTicketsIdGet**](StaffTicketsApi.md#supportticketsidget) | **GET** /support/tickets/{id} | Detalle completo del ticket (incluye notas internas)
 [**supportTicketsIdMessagesPost**](StaffTicketsApi.md#supportticketsidmessagespost) | **POST** /support/tickets/{id}/messages | Responder o agregar nota interna
@@ -112,6 +113,51 @@ Name | Type | Description  | Notes
 ### HTTP request headers
 
  - **Content-Type**: application/json
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **supportTicketsIdAttachmentsPost**
+> ClientSupportTicketsIdAttachmentsPost201Response supportTicketsIdAttachmentsPost(id, files, messageId)
+
+Adjuntar evidencia al ticket (foto de diagnóstico, etc.)
+
+### Example
+```dart
+import 'package:mastercolor_api/api.dart';
+
+final api = MastercolorApi().getStaffTicketsApi();
+final int id = 56; // int | 
+final List<MultipartFile> files = /path/to/file.txt; // List<MultipartFile> | Imágenes (jpg/jpeg/png/webp, máx 5MB c/u, máx 5 por petición).
+final int messageId = 56; // int | Adjuntar a un mensaje específico (opcional).
+
+try {
+    final response = api.supportTicketsIdAttachmentsPost(id, files, messageId);
+    print(response);
+} on DioException catch (e) {
+    print('Exception when calling StaffTicketsApi->supportTicketsIdAttachmentsPost: $e\n');
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **id** | **int**|  | 
+ **files** | [**List&lt;MultipartFile&gt;**](MultipartFile.md)| Imágenes (jpg/jpeg/png/webp, máx 5MB c/u, máx 5 por petición). | 
+ **messageId** | **int**| Adjuntar a un mensaje específico (opcional). | [optional] 
+
+### Return type
+
+[**ClientSupportTicketsIdAttachmentsPost201Response**](ClientSupportTicketsIdAttachmentsPost201Response.md)
+
+### Authorization
+
+[staffAuth](../README.md#staffAuth)
+
+### HTTP request headers
+
+ - **Content-Type**: multipart/form-data
  - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)

@@ -8,12 +8,15 @@ import 'package:mastercolor_api/src/auth/basic_auth.dart';
 import 'package:mastercolor_api/src/auth/bearer_auth.dart';
 import 'package:mastercolor_api/src/auth/oauth.dart';
 import 'package:mastercolor_api/src/api/cliente_dispositivos_api.dart';
+import 'package:mastercolor_api/src/api/cliente_productos_api.dart';
 import 'package:mastercolor_api/src/api/cliente_tickets_api.dart';
 import 'package:mastercolor_api/src/api/cliente_unidades_api.dart';
+import 'package:mastercolor_api/src/api/sesin_api.dart';
 import 'package:mastercolor_api/src/api/staff_dispositivos_api.dart';
 import 'package:mastercolor_api/src/api/staff_mtricas_api.dart';
 import 'package:mastercolor_api/src/api/staff_tickets_api.dart';
 import 'package:mastercolor_api/src/api/staff_unidades_api.dart';
+import 'package:mastercolor_api/src/api/staff_usuarios_api.dart';
 
 class MastercolorApi {
   static const String basePath = r'http://localhost:8000/api';
@@ -112,6 +115,12 @@ class MastercolorApi {
     return ClienteDispositivosApi(dio);
   }
 
+  /// Get ClienteProductosApi instance, base route and serializer can be overridden by a given but be careful,
+  /// by doing that all interceptors will not be executed
+  ClienteProductosApi getClienteProductosApi() {
+    return ClienteProductosApi(dio);
+  }
+
   /// Get ClienteTicketsApi instance, base route and serializer can be overridden by a given but be careful,
   /// by doing that all interceptors will not be executed
   ClienteTicketsApi getClienteTicketsApi() {
@@ -122,6 +131,12 @@ class MastercolorApi {
   /// by doing that all interceptors will not be executed
   ClienteUnidadesApi getClienteUnidadesApi() {
     return ClienteUnidadesApi(dio);
+  }
+
+  /// Get SesinApi instance, base route and serializer can be overridden by a given but be careful,
+  /// by doing that all interceptors will not be executed
+  SesinApi getSesinApi() {
+    return SesinApi(dio);
   }
 
   /// Get StaffDispositivosApi instance, base route and serializer can be overridden by a given but be careful,
@@ -146,5 +161,11 @@ class MastercolorApi {
   /// by doing that all interceptors will not be executed
   StaffUnidadesApi getStaffUnidadesApi() {
     return StaffUnidadesApi(dio);
+  }
+
+  /// Get StaffUsuariosApi instance, base route and serializer can be overridden by a given but be careful,
+  /// by doing that all interceptors will not be executed
+  StaffUsuariosApi getStaffUsuariosApi() {
+    return StaffUsuariosApi(dio);
   }
 }
