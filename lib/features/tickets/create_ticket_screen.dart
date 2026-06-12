@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:mastercolor_api/mastercolor_api.dart';
 
+import '../../core/auth/session.dart';
 import '../../core/network/api_exception.dart';
 import '../addresses/addresses_repository.dart';
 import '../units/units_controller.dart';
@@ -30,6 +34,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
       TicketCreateRequestServiceTypeEnum.remoto;
   int? _soldUnitId;
   int? _serviceAddressId;
+  final List<XFile> _attachments = [];
   bool _submitting = false;
 
   @override
@@ -43,6 +48,39 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
     _subject.dispose();
     _description.dispose();
     super.dispose();
+  }
+
+  /// Selecciona fotos y/o videos cortos de la avería (opcional). Un mismo
+  /// selector permite elegir imágenes y videos a la vez.
+  Future<void> _pickAttachments() async {
+    if (_submitting) return;
+    try {
+      final picked = await ImagePicker().pickMultipleMedia();
+      if (picked.isEmpty) return;
+      setState(() => _attachments.addAll(picked));
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No se pudo abrir la galería.')),
+        );
+      }
+    }
+  }
+
+  void _removeAttachment(XFile file) {
+    setState(() => _attachments.remove(file));
+  }
+
+  bool _isVideo(XFile f) {
+    final mime = f.mimeType;
+    if (mime != null) return mime.startsWith('video/');
+    final name = f.name.toLowerCase();
+    return name.endsWith('.mp4') ||
+        name.endsWith('.mov') ||
+        name.endsWith('.avi') ||
+        name.endsWith('.mkv') ||
+        name.endsWith('.webm') ||
+        name.endsWith('.3gp');
   }
 
   Future<void> _submit() async {
@@ -59,7 +97,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
     }
     setState(() => _submitting = true);
     try {
-      await ref.read(ticketsRepositoryProvider).create(
+      final ticket = await ref.read(ticketsRepositoryProvider).create(
             soldUnitId: _soldUnitId,
             category: _category,
             priority: _priority,
@@ -71,10 +109,25 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
                     ? _serviceAddressId
                     : null,
           );
+      // El ticket ya está creado: los adjuntos son un paso opcional posterior.
+      // Si su subida falla, no perdemos el ticket; se pueden añadir desde el detalle.
+      var successMsg = 'Ticket creado.';
+      if (_attachments.isNotEmpty && ticket.id != null) {
+        try {
+          await ref.read(ticketsRepositoryProvider).addAttachments(
+                role: UserRole.client,
+                id: ticket.id!,
+                files: _attachments,
+              );
+        } catch (_) {
+          successMsg =
+              'Ticket creado, pero no se pudieron subir los adjuntos. Agrégalos desde el detalle.';
+        }
+      }
       ref.read(ticketsControllerProvider.notifier).refresh();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Ticket creado.')),
+          SnackBar(content: Text(successMsg)),
         );
         Navigator.of(context).pop();
       }
@@ -183,6 +236,45 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
               validator: (v) =>
                   (v == null || v.trim().length < 10) ? 'Describe el problema' : null,
             ),
+            const SizedBox(height: 16),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text('Adjuntos (opcional)',
+                  style: Theme.of(context).textTheme.labelLarge),
+            ),
+            const SizedBox(height: 4),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Agrega fotos o videos cortos de la avería.',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: OutlinedButton.icon(
+                onPressed: _submitting ? null : _pickAttachments,
+                icon: const Icon(Icons.attach_file),
+                label: const Text('Agregar fotos o video'),
+              ),
+            ),
+            if (_attachments.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              SizedBox(
+                height: 92,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: _attachments.length,
+                  separatorBuilder: (_, _) => const SizedBox(width: 8),
+                  itemBuilder: (context, i) => _AttachmentThumb(
+                    file: _attachments[i],
+                    isVideo: _isVideo(_attachments[i]),
+                    onRemove: () => _removeAttachment(_attachments[i]),
+                  ),
+                ),
+              ),
+            ],
             const SizedBox(height: 24),
             FilledButton(
               onPressed: _submitting ? null : _submit,
@@ -197,6 +289,59 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Miniatura de un adjunto seleccionado (imagen o video) con botón para
+/// quitarlo antes de enviar.
+class _AttachmentThumb extends StatelessWidget {
+  const _AttachmentThumb({
+    required this.file,
+    required this.isVideo,
+    required this.onRemove,
+  });
+
+  final XFile file;
+  final bool isVideo;
+  final VoidCallback onRemove;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: SizedBox(
+            width: 92,
+            height: 92,
+            child: isVideo
+                ? Container(
+                    color: Colors.black87,
+                    child: const Center(
+                      child: Icon(Icons.play_circle_outline,
+                          color: Colors.white, size: 32),
+                    ),
+                  )
+                : Image.file(File(file.path), fit: BoxFit.cover),
+          ),
+        ),
+        Positioned(
+          top: 2,
+          right: 2,
+          child: GestureDetector(
+            onTap: onRemove,
+            child: Container(
+              decoration: const BoxDecoration(
+                color: Colors.black54,
+                shape: BoxShape.circle,
+              ),
+              padding: const EdgeInsets.all(2),
+              child: const Icon(Icons.close, color: Colors.white, size: 16),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

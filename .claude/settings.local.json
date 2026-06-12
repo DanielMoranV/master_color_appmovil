@@ -32,7 +32,10 @@
       "Bash(grep -nA12 \"listTechnicians\" lib/features/tickets/tickets_repository.dart)",
       "Bash(grep -nA6 \"supportTicketsSlaGet\\({\" packages/mastercolor_api/lib/src/api/staff_tickets_api.dart)",
       "Bash(grep -nA4 \"supportUnitsIdHistoryGet\\({\" packages/mastercolor_api/lib/src/api/staff_unidades_api.dart)",
-      "Skill(run)"
+      "Skill(run)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)"
     ]
   }
 }

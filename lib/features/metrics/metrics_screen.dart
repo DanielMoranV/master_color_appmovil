@@ -43,22 +43,22 @@ class MetricsScreen extends ConsumerWidget {
           IconButton(
             icon: const Icon(Icons.event_note_outlined),
             tooltip: 'Mi agenda',
-            onPressed: () => context.go('/staff/agenda'),
+            onPressed: () => context.push('/staff/agenda'),
           ),
           IconButton(
             icon: const Icon(Icons.inventory_2_outlined),
             tooltip: 'Unidades',
-            onPressed: () => context.go('/staff/units'),
+            onPressed: () => context.push('/staff/units'),
           ),
           IconButton(
             icon: const Icon(Icons.confirmation_number_outlined),
             tooltip: 'Cola de tickets',
-            onPressed: () => context.go('/staff/tickets'),
+            onPressed: () => context.push('/staff/tickets'),
           ),
           IconButton(
             icon: const Icon(Icons.badge_outlined),
             tooltip: 'Mi perfil',
-            onPressed: () => context.go('/staff/profile'),
+            onPressed: () => context.push('/staff/profile'),
           ),
           IconButton(
             icon: const Icon(Icons.logout),
@@ -229,7 +229,7 @@ class _Dashboard extends StatelessWidget {
               value: '${metrics.slaBreached ?? 0}',
               icon: Icons.warning_amber_outlined,
               color: Colors.deepOrange,
-              onTap: () => context.go('/staff/sla'),
+              onTap: () => context.push('/staff/sla'),
             ),
           ],
         ),
