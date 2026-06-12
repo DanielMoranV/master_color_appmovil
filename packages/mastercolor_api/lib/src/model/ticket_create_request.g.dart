@@ -165,7 +165,7 @@ TicketCreateRequest _$TicketCreateRequestFromJson(Map<String, dynamic> json) =>
                   _$TicketCreateRequestServiceTypeEnumEnumMap,
                   v,
                 ) ??
-                'remoto',
+                TicketCreateRequestServiceTypeEnum.remoto,
           ),
           serviceAddressId: $checkedConvert(
             'service_address_id',

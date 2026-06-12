@@ -32,7 +32,7 @@ class TicketCreateRequest {
 
     required  this.description,
 
-     this.serviceType = const TicketCreateRequestServiceTypeEnum._('remoto'),
+     this.serviceType = TicketCreateRequestServiceTypeEnum.remoto,
 
      this.serviceAddressId,
   });

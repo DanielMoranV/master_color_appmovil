@@ -233,6 +233,32 @@ npx @openapitools/openapi-generator-cli generate ...   # ver README_REGEN.md
 
 ---
 
+## Usuarios de prueba
+
+Definidos en los seeders del backend. La contraseña es compartida por tipo de usuario.
+
+### Cliente (`TestClientSeeder.php`)
+
+`is_test = true` — los pagos se simulan si `MERCADOPAGO_ALLOW_SIMULATION` está activo.
+
+| Campo | Valor |
+|-------|-------|
+| Email | `cliente.test@mastercolor.com` |
+| Password | `cliente1234` |
+| DNI | `70000001` |
+| Teléfono | `910000001` |
+
+### Técnicos (`TecnicosDePruebaSeeder.php`)
+
+Rol **Técnico**, password compartida `tecnico1234`.
+
+| Nombre | Email | DNI | Teléfono |
+|--------|-------|-----|----------|
+| Carlos Técnico | `tecnico1@mastercolor.com` | `80000001` | `900000001` |
+| Lucía Técnica | `tecnico2@mastercolor.com` | `80000002` | `900000002` |
+
+---
+
 ## Calidad: análisis y pruebas
 
 ```bash
