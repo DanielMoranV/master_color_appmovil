@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../auth/auth_controller.dart';
+import '../../features/agenda/agenda_screen.dart';
 import '../../features/auth/login_screen.dart';
 import '../../features/metrics/metrics_screen.dart';
 import '../../features/tickets/create_ticket_screen.dart';
@@ -11,8 +12,11 @@ import '../../features/tickets/tickets_screen.dart';
 import '../../features/units/register_unit_screen.dart';
 import '../../features/units/unit_detail_screen.dart';
 import '../../features/units/units_screen.dart';
+import '../../features/sla/sla_screen.dart';
 import '../../features/staff_units/staff_units_screen.dart';
 import '../../features/staff_units/staff_unit_detail_screen.dart';
+import '../../features/staff_units/unit_history_screen.dart';
+import '../../features/technician/technician_profile_screen.dart';
 import '../../shared/widgets/splash_screen.dart';
 
 /// Router gateado por rol (go_router). Redirige según el [AuthState]:
@@ -84,6 +88,12 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       // Área técnico/staff
       GoRoute(path: '/staff', builder: (_, _) => const MetricsScreen()),
+      GoRoute(path: '/staff/agenda', builder: (_, _) => const AgendaScreen()),
+      GoRoute(path: '/staff/sla', builder: (_, _) => const SlaScreen()),
+      GoRoute(
+        path: '/staff/profile',
+        builder: (_, _) => const TechnicianProfileScreen(),
+      ),
       GoRoute(path: '/staff/tickets', builder: (_, _) => const TicketsScreen()),
       GoRoute(
         path: '/staff/tickets/:id',
@@ -95,6 +105,12 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/staff/units/:id',
         builder: (_, state) => StaffUnitDetailScreen(
+          unitId: int.parse(state.pathParameters['id']!),
+        ),
+      ),
+      GoRoute(
+        path: '/staff/units/:id/history',
+        builder: (_, state) => UnitHistoryScreen(
           unitId: int.parse(state.pathParameters['id']!),
         ),
       ),

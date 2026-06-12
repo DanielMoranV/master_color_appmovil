@@ -134,8 +134,31 @@ final ticketDetailProvider =
   return ref.watch(ticketsRepositoryProvider).detail(role: role, id: id);
 });
 
-/// Técnicos asignables (solo staff), desde `GET /support/technicians`.
-final assignableTechniciansProvider =
-    FutureProvider.autoDispose<List<Technician>>((ref) {
-  return ref.watch(ticketsRepositoryProvider).listTechnicians();
+/// Filtros para el listado de técnicos asignables. Como record, tiene igualdad
+/// por valor (clave estable para la familia de providers).
+typedef TechnicianFilter = ({String? specialty, String? zone, bool availableOnly});
+
+/// Técnicos asignables (solo staff), desde `GET /support/technicians`, filtrados
+/// por especialidad/zona/disponibilidad.
+final assignableTechniciansProvider = FutureProvider.autoDispose
+    .family<List<Technician>, TechnicianFilter>((ref, f) {
+  return ref.watch(ticketsRepositoryProvider).listTechnicians(
+        specialty: f.specialty,
+        zone: f.zone,
+        availableOnly: f.availableOnly,
+      );
+});
+
+/// Agenda del técnico para una fecha (solo staff). La clave es la fecha
+/// normalizada a medianoche; `null` no se usa (la pantalla siempre pasa un día).
+final agendaProvider = FutureProvider.autoDispose
+    .family<List<SupportTicket>, DateTime>((ref, date) {
+  return ref.watch(ticketsRepositoryProvider).agenda(date: date);
+});
+
+/// Lista de escalamiento por SLA (solo staff), por filtro (all/due_soon/
+/// breached).
+final slaListProvider = FutureProvider.autoDispose
+    .family<List<SupportTicket>, String>((ref, filter) {
+  return ref.watch(ticketsRepositoryProvider).slaList(filter: filter);
 });

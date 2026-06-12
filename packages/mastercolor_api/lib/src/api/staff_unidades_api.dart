@@ -13,6 +13,7 @@ import 'package:mastercolor_api/src/model/api_error.dart';
 import 'package:mastercolor_api/src/model/client_units_get200_response.dart';
 import 'package:mastercolor_api/src/model/client_units_id_get200_response.dart';
 import 'package:mastercolor_api/src/model/client_units_post201_response.dart';
+import 'package:mastercolor_api/src/model/support_units_id_history_get200_response.dart';
 import 'package:mastercolor_api/src/model/support_units_id_patch_request.dart';
 import 'package:mastercolor_api/src/model/validation_error.dart';
 
@@ -184,6 +185,84 @@ _responseData = rawData == null ? null : deserialize<ClientUnitsIdGet200Response
     }
 
     return Response<ClientUnitsIdGet200Response>(
+      data: _responseData,
+      headers: _response.headers,
+      isRedirect: _response.isRedirect,
+      requestOptions: _response.requestOptions,
+      redirects: _response.redirects,
+      statusCode: _response.statusCode,
+      statusMessage: _response.statusMessage,
+      extra: _response.extra,
+    );
+  }
+
+  /// Historial de servicio del equipo
+  /// Línea de tiempo cronológica (más reciente primero) de aperturas de ticket, visitas y diagnósticos/resoluciones de la unidad.
+  ///
+  /// Parameters:
+  /// * [id] 
+  /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
+  /// * [headers] - Can be used to add additional headers to the request
+  /// * [extras] - Can be used to add flags to the request
+  /// * [validateStatus] - A [ValidateStatus] callback that can be used to determine request success based on the HTTP status of the response
+  /// * [onSendProgress] - A [ProgressCallback] that can be used to get the send progress
+  /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
+  ///
+  /// Returns a [Future] containing a [Response] with a [SupportUnitsIdHistoryGet200Response] as data
+  /// Throws [DioException] if API call or serialization fails
+  Future<Response<SupportUnitsIdHistoryGet200Response>> supportUnitsIdHistoryGet({ 
+    required int id,
+    CancelToken? cancelToken,
+    Map<String, dynamic>? headers,
+    Map<String, dynamic>? extra,
+    ValidateStatus? validateStatus,
+    ProgressCallback? onSendProgress,
+    ProgressCallback? onReceiveProgress,
+  }) async {
+    final _path = r'/support/units/{id}/history'.replaceAll('{' r'id' '}', id.toString());
+    final _options = Options(
+      method: r'GET',
+      headers: <String, dynamic>{
+        ...?headers,
+      },
+      extra: <String, dynamic>{
+        'secure': <Map<String, String>>[
+          {
+            'type': 'http',
+            'scheme': 'bearer',
+            'name': 'staffAuth',
+          },
+        ],
+        ...?extra,
+      },
+      validateStatus: validateStatus,
+    );
+
+    final _response = await _dio.request<Object>(
+      _path,
+      options: _options,
+      cancelToken: cancelToken,
+      onSendProgress: onSendProgress,
+      onReceiveProgress: onReceiveProgress,
+    );
+
+    SupportUnitsIdHistoryGet200Response? _responseData;
+
+    try {
+final rawData = _response.data;
+_responseData = rawData == null ? null : deserialize<SupportUnitsIdHistoryGet200Response, SupportUnitsIdHistoryGet200Response>(rawData, 'SupportUnitsIdHistoryGet200Response', growable: true);
+
+    } catch (error, stackTrace) {
+      throw DioException(
+        requestOptions: _response.requestOptions,
+        response: _response,
+        type: DioExceptionType.unknown,
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
+
+    return Response<SupportUnitsIdHistoryGet200Response>(
       data: _responseData,
       headers: _response.headers,
       isRedirect: _response.isRedirect,

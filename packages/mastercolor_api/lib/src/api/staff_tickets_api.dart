@@ -16,11 +16,14 @@ import 'package:mastercolor_api/src/model/client_support_tickets_id_get200_respo
 import 'package:mastercolor_api/src/model/client_support_tickets_id_messages_post201_response.dart';
 import 'package:mastercolor_api/src/model/client_support_tickets_post201_response.dart';
 import 'package:mastercolor_api/src/model/diagnosis_request.dart';
+import 'package:mastercolor_api/src/model/support_tickets_agenda_get200_response.dart';
 import 'package:mastercolor_api/src/model/support_tickets_id_assign_patch_request.dart';
 import 'package:mastercolor_api/src/model/support_tickets_id_messages_post_request.dart';
 import 'package:mastercolor_api/src/model/support_tickets_id_status_patch_request.dart';
 import 'package:mastercolor_api/src/model/ticket_category.dart';
 import 'package:mastercolor_api/src/model/ticket_priority.dart';
+import 'package:mastercolor_api/src/model/ticket_quote_create_request.dart';
+import 'package:mastercolor_api/src/model/ticket_schedule_request.dart';
 import 'package:mastercolor_api/src/model/ticket_status.dart';
 import 'package:mastercolor_api/src/model/validation_error.dart';
 
@@ -29,6 +32,89 @@ class StaffTicketsApi {
   final Dio _dio;
 
   const StaffTicketsApi(this._dio);
+
+  /// Agenda del técnico autenticado
+  /// Tickets con visita programada en la fecha indicada (default hoy), ordenados por hora, con cliente y dirección.
+  ///
+  /// Parameters:
+  /// * [date] - Fecha (YYYY-MM-DD). Default hoy.
+  /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
+  /// * [headers] - Can be used to add additional headers to the request
+  /// * [extras] - Can be used to add flags to the request
+  /// * [validateStatus] - A [ValidateStatus] callback that can be used to determine request success based on the HTTP status of the response
+  /// * [onSendProgress] - A [ProgressCallback] that can be used to get the send progress
+  /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
+  ///
+  /// Returns a [Future] containing a [Response] with a [SupportTicketsAgendaGet200Response] as data
+  /// Throws [DioException] if API call or serialization fails
+  Future<Response<SupportTicketsAgendaGet200Response>> supportTicketsAgendaGet({ 
+    DateTime? date,
+    CancelToken? cancelToken,
+    Map<String, dynamic>? headers,
+    Map<String, dynamic>? extra,
+    ValidateStatus? validateStatus,
+    ProgressCallback? onSendProgress,
+    ProgressCallback? onReceiveProgress,
+  }) async {
+    final _path = r'/support/tickets/agenda';
+    final _options = Options(
+      method: r'GET',
+      headers: <String, dynamic>{
+        ...?headers,
+      },
+      extra: <String, dynamic>{
+        'secure': <Map<String, String>>[
+          {
+            'type': 'http',
+            'scheme': 'bearer',
+            'name': 'staffAuth',
+          },
+        ],
+        ...?extra,
+      },
+      validateStatus: validateStatus,
+    );
+
+    final _queryParameters = <String, dynamic>{
+      if (date != null) r'date': date,
+    };
+
+    final _response = await _dio.request<Object>(
+      _path,
+      options: _options,
+      queryParameters: _queryParameters,
+      cancelToken: cancelToken,
+      onSendProgress: onSendProgress,
+      onReceiveProgress: onReceiveProgress,
+    );
+
+    SupportTicketsAgendaGet200Response? _responseData;
+
+    try {
+final rawData = _response.data;
+_responseData = rawData == null ? null : deserialize<SupportTicketsAgendaGet200Response, SupportTicketsAgendaGet200Response>(rawData, 'SupportTicketsAgendaGet200Response', growable: true);
+
+    } catch (error, stackTrace) {
+      throw DioException(
+        requestOptions: _response.requestOptions,
+        response: _response,
+        type: DioExceptionType.unknown,
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
+
+    return Response<SupportTicketsAgendaGet200Response>(
+      data: _responseData,
+      headers: _response.headers,
+      isRedirect: _response.isRedirect,
+      requestOptions: _response.requestOptions,
+      redirects: _response.redirects,
+      statusCode: _response.statusCode,
+      statusMessage: _response.statusMessage,
+      extra: _response.extra,
+    );
+  }
 
   /// Listar/filtrar tickets (cola de soporte)
   /// 
@@ -613,6 +699,204 @@ _responseData = rawData == null ? null : deserialize<ClientSupportTicketsIdMessa
     );
   }
 
+  /// Crear presupuesto (servicio fuera de garantía)
+  /// Crea la cotización y deja el ticket en &#39;en_espera_aprobacion&#39;.
+  ///
+  /// Parameters:
+  /// * [id] 
+  /// * [ticketQuoteCreateRequest] 
+  /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
+  /// * [headers] - Can be used to add additional headers to the request
+  /// * [extras] - Can be used to add flags to the request
+  /// * [validateStatus] - A [ValidateStatus] callback that can be used to determine request success based on the HTTP status of the response
+  /// * [onSendProgress] - A [ProgressCallback] that can be used to get the send progress
+  /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
+  ///
+  /// Returns a [Future] containing a [Response] with a [ClientSupportTicketsIdGet200Response] as data
+  /// Throws [DioException] if API call or serialization fails
+  Future<Response<ClientSupportTicketsIdGet200Response>> supportTicketsIdQuotePost({ 
+    required int id,
+    required TicketQuoteCreateRequest ticketQuoteCreateRequest,
+    CancelToken? cancelToken,
+    Map<String, dynamic>? headers,
+    Map<String, dynamic>? extra,
+    ValidateStatus? validateStatus,
+    ProgressCallback? onSendProgress,
+    ProgressCallback? onReceiveProgress,
+  }) async {
+    final _path = r'/support/tickets/{id}/quote'.replaceAll('{' r'id' '}', id.toString());
+    final _options = Options(
+      method: r'POST',
+      headers: <String, dynamic>{
+        ...?headers,
+      },
+      extra: <String, dynamic>{
+        'secure': <Map<String, String>>[
+          {
+            'type': 'http',
+            'scheme': 'bearer',
+            'name': 'staffAuth',
+          },
+        ],
+        ...?extra,
+      },
+      contentType: 'application/json',
+      validateStatus: validateStatus,
+    );
+
+    dynamic _bodyData;
+
+    try {
+      _bodyData = jsonEncode(ticketQuoteCreateRequest);
+
+    } catch(error, stackTrace) {
+      throw DioException(
+         requestOptions: _options.compose(
+          _dio.options,
+          _path,
+        ),
+        type: DioExceptionType.unknown,
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
+
+    final _response = await _dio.request<Object>(
+      _path,
+      data: _bodyData,
+      options: _options,
+      cancelToken: cancelToken,
+      onSendProgress: onSendProgress,
+      onReceiveProgress: onReceiveProgress,
+    );
+
+    ClientSupportTicketsIdGet200Response? _responseData;
+
+    try {
+final rawData = _response.data;
+_responseData = rawData == null ? null : deserialize<ClientSupportTicketsIdGet200Response, ClientSupportTicketsIdGet200Response>(rawData, 'ClientSupportTicketsIdGet200Response', growable: true);
+
+    } catch (error, stackTrace) {
+      throw DioException(
+        requestOptions: _response.requestOptions,
+        response: _response,
+        type: DioExceptionType.unknown,
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
+
+    return Response<ClientSupportTicketsIdGet200Response>(
+      data: _responseData,
+      headers: _response.headers,
+      isRedirect: _response.isRedirect,
+      requestOptions: _response.requestOptions,
+      redirects: _response.redirects,
+      statusCode: _response.statusCode,
+      statusMessage: _response.statusMessage,
+      extra: _response.extra,
+    );
+  }
+
+  /// Programar/reprogramar la visita
+  /// 
+  ///
+  /// Parameters:
+  /// * [id] 
+  /// * [ticketScheduleRequest] 
+  /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
+  /// * [headers] - Can be used to add additional headers to the request
+  /// * [extras] - Can be used to add flags to the request
+  /// * [validateStatus] - A [ValidateStatus] callback that can be used to determine request success based on the HTTP status of the response
+  /// * [onSendProgress] - A [ProgressCallback] that can be used to get the send progress
+  /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
+  ///
+  /// Returns a [Future] containing a [Response] with a [ClientSupportTicketsPost201Response] as data
+  /// Throws [DioException] if API call or serialization fails
+  Future<Response<ClientSupportTicketsPost201Response>> supportTicketsIdSchedulePatch({ 
+    required int id,
+    required TicketScheduleRequest ticketScheduleRequest,
+    CancelToken? cancelToken,
+    Map<String, dynamic>? headers,
+    Map<String, dynamic>? extra,
+    ValidateStatus? validateStatus,
+    ProgressCallback? onSendProgress,
+    ProgressCallback? onReceiveProgress,
+  }) async {
+    final _path = r'/support/tickets/{id}/schedule'.replaceAll('{' r'id' '}', id.toString());
+    final _options = Options(
+      method: r'PATCH',
+      headers: <String, dynamic>{
+        ...?headers,
+      },
+      extra: <String, dynamic>{
+        'secure': <Map<String, String>>[
+          {
+            'type': 'http',
+            'scheme': 'bearer',
+            'name': 'staffAuth',
+          },
+        ],
+        ...?extra,
+      },
+      contentType: 'application/json',
+      validateStatus: validateStatus,
+    );
+
+    dynamic _bodyData;
+
+    try {
+      _bodyData = jsonEncode(ticketScheduleRequest);
+
+    } catch(error, stackTrace) {
+      throw DioException(
+         requestOptions: _options.compose(
+          _dio.options,
+          _path,
+        ),
+        type: DioExceptionType.unknown,
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
+
+    final _response = await _dio.request<Object>(
+      _path,
+      data: _bodyData,
+      options: _options,
+      cancelToken: cancelToken,
+      onSendProgress: onSendProgress,
+      onReceiveProgress: onReceiveProgress,
+    );
+
+    ClientSupportTicketsPost201Response? _responseData;
+
+    try {
+final rawData = _response.data;
+_responseData = rawData == null ? null : deserialize<ClientSupportTicketsPost201Response, ClientSupportTicketsPost201Response>(rawData, 'ClientSupportTicketsPost201Response', growable: true);
+
+    } catch (error, stackTrace) {
+      throw DioException(
+        requestOptions: _response.requestOptions,
+        response: _response,
+        type: DioExceptionType.unknown,
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
+
+    return Response<ClientSupportTicketsPost201Response>(
+      data: _responseData,
+      headers: _response.headers,
+      isRedirect: _response.isRedirect,
+      requestOptions: _response.requestOptions,
+      redirects: _response.redirects,
+      statusCode: _response.statusCode,
+      statusMessage: _response.statusMessage,
+      extra: _response.extra,
+    );
+  }
+
   /// Cambiar el estado del ticket
   /// Transiciones válidas: &#x60;abierto→asignado&#x60;, &#x60;asignado→en_proceso&#x60;, &#x60;en_proceso⇄en_espera_cliente&#x60;, &#x60;en_proceso→resuelto&#x60;, &#x60;resuelto→cerrado&#x60;, &#x60;*→cancelado&#x60;. 
   ///
@@ -756,6 +1040,95 @@ _responseData = rawData == null ? null : deserialize<ClientSupportTicketsPost201
 
     final _queryParameters = <String, dynamic>{
       if (status != null) r'status': status,
+    };
+
+    final _response = await _dio.request<Object>(
+      _path,
+      options: _options,
+      queryParameters: _queryParameters,
+      cancelToken: cancelToken,
+      onSendProgress: onSendProgress,
+      onReceiveProgress: onReceiveProgress,
+    );
+
+    ClientSupportTicketsGet200Response? _responseData;
+
+    try {
+final rawData = _response.data;
+_responseData = rawData == null ? null : deserialize<ClientSupportTicketsGet200Response, ClientSupportTicketsGet200Response>(rawData, 'ClientSupportTicketsGet200Response', growable: true);
+
+    } catch (error, stackTrace) {
+      throw DioException(
+        requestOptions: _response.requestOptions,
+        response: _response,
+        type: DioExceptionType.unknown,
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
+
+    return Response<ClientSupportTicketsGet200Response>(
+      data: _responseData,
+      headers: _response.headers,
+      isRedirect: _response.isRedirect,
+      requestOptions: _response.requestOptions,
+      redirects: _response.redirects,
+      statusCode: _response.statusCode,
+      statusMessage: _response.statusMessage,
+      extra: _response.extra,
+    );
+  }
+
+  /// Tickets por SLA (vencidos o por vencer)
+  /// Lista paginada de tickets abiertos cuyo SLA está vencido o próximo a vencer, ordenados por &#x60;sla_due_at&#x60; ascendente (escalamiento).
+  ///
+  /// Parameters:
+  /// * [page] 
+  /// * [perPage] 
+  /// * [filter] - breached (vencidos) | due_soon (por vencer) | all (ambos, default).
+  /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
+  /// * [headers] - Can be used to add additional headers to the request
+  /// * [extras] - Can be used to add flags to the request
+  /// * [validateStatus] - A [ValidateStatus] callback that can be used to determine request success based on the HTTP status of the response
+  /// * [onSendProgress] - A [ProgressCallback] that can be used to get the send progress
+  /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
+  ///
+  /// Returns a [Future] containing a [Response] with a [ClientSupportTicketsGet200Response] as data
+  /// Throws [DioException] if API call or serialization fails
+  Future<Response<ClientSupportTicketsGet200Response>> supportTicketsSlaGet({ 
+    int? page = 1,
+    int? perPage = 15,
+    String? filter = 'all',
+    CancelToken? cancelToken,
+    Map<String, dynamic>? headers,
+    Map<String, dynamic>? extra,
+    ValidateStatus? validateStatus,
+    ProgressCallback? onSendProgress,
+    ProgressCallback? onReceiveProgress,
+  }) async {
+    final _path = r'/support/tickets/sla';
+    final _options = Options(
+      method: r'GET',
+      headers: <String, dynamic>{
+        ...?headers,
+      },
+      extra: <String, dynamic>{
+        'secure': <Map<String, String>>[
+          {
+            'type': 'http',
+            'scheme': 'bearer',
+            'name': 'staffAuth',
+          },
+        ],
+        ...?extra,
+      },
+      validateStatus: validateStatus,
+    );
+
+    final _queryParameters = <String, dynamic>{
+      if (page != null) r'page': page,
+      if (perPage != null) r'per_page': perPage,
+      if (filter != null) r'filter': filter,
     };
 
     final _response = await _dio.request<Object>(

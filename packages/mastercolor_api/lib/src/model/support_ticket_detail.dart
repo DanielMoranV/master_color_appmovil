@@ -4,13 +4,18 @@
 
 // ignore_for_file: unused_element
 import 'package:mastercolor_api/src/model/sold_unit.dart';
-import 'package:mastercolor_api/src/model/ticket_priority.dart';
-import 'package:mastercolor_api/src/model/ticket_channel.dart';
-import 'package:mastercolor_api/src/model/ticket_status.dart';
 import 'package:mastercolor_api/src/model/ticket_attachment.dart';
 import 'package:mastercolor_api/src/model/ticket_message.dart';
-import 'package:mastercolor_api/src/model/ticket_category.dart';
 import 'package:mastercolor_api/src/model/ticket_status_history.dart';
+import 'package:mastercolor_api/src/model/ticket_quote.dart';
+import 'package:mastercolor_api/src/model/ticket_priority.dart';
+import 'package:mastercolor_api/src/model/ticket_visit.dart';
+import 'package:mastercolor_api/src/model/address.dart';
+import 'package:mastercolor_api/src/model/ticket_channel.dart';
+import 'package:mastercolor_api/src/model/ticket_part.dart';
+import 'package:mastercolor_api/src/model/ticket_status.dart';
+import 'package:mastercolor_api/src/model/support_ticket_client.dart';
+import 'package:mastercolor_api/src/model/ticket_category.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -50,6 +55,14 @@ class SupportTicketDetail {
 
      this.channel,
 
+     this.serviceType,
+
+     this.serviceAddressId,
+
+     this.scheduledAt,
+
+     this.scheduledWindowMinutes,
+
      this.assignedUserId,
 
      this.assignedUserName,
@@ -57,6 +70,8 @@ class SupportTicketDetail {
      this.isWarrantyCovered,
 
      this.slaDueAt,
+
+     this.slaStatus,
 
      this.firstResponseAt,
 
@@ -66,9 +81,15 @@ class SupportTicketDetail {
 
      this.rating,
 
+     this.ratingComment,
+
      this.createdAt,
 
      this.updatedAt,
+
+     this.client,
+
+     this.serviceAddress,
 
      this.soldUnit,
 
@@ -81,6 +102,12 @@ class SupportTicketDetail {
      this.diagnosis,
 
      this.partsUsed,
+
+     this.parts,
+
+     this.visits,
+
+     this.quote,
   });
 
   @JsonKey(
@@ -215,6 +242,57 @@ class SupportTicketDetail {
 
 
 
+      /// Tipo de servicio. Si es 'domicilio', service_address está presente.
+  @JsonKey(
+    
+    name: r'service_type',
+    required: false,
+    includeIfNull: false,
+  )
+
+
+  final SupportTicketDetailServiceTypeEnum? serviceType;
+
+
+
+  @JsonKey(
+    
+    name: r'service_address_id',
+    required: false,
+    includeIfNull: false,
+  )
+
+
+  final int? serviceAddressId;
+
+
+
+      /// Fecha/hora programada de la visita.
+  @JsonKey(
+    
+    name: r'scheduled_at',
+    required: false,
+    includeIfNull: false,
+  )
+
+
+  final DateTime? scheduledAt;
+
+
+
+      /// Ventana de tolerancia en minutos.
+  @JsonKey(
+    
+    name: r'scheduled_window_minutes',
+    required: false,
+    includeIfNull: false,
+  )
+
+
+  final int? scheduledWindowMinutes;
+
+
+
   @JsonKey(
     
     name: r'assigned_user_id',
@@ -260,6 +338,19 @@ class SupportTicketDetail {
 
 
   final DateTime? slaDueAt;
+
+
+
+      /// Estado del SLA del ticket; null si está resuelto/cerrado/cancelado o sin SLA.
+  @JsonKey(
+    
+    name: r'sla_status',
+    required: false,
+    includeIfNull: false,
+  )
+
+
+  final SupportTicketDetailSlaStatusEnum? slaStatus;
 
 
 
@@ -315,6 +406,18 @@ class SupportTicketDetail {
 
   @JsonKey(
     
+    name: r'rating_comment',
+    required: false,
+    includeIfNull: false,
+  )
+
+
+  final String? ratingComment;
+
+
+
+  @JsonKey(
+    
     name: r'created_at',
     required: false,
     includeIfNull: false,
@@ -334,6 +437,31 @@ class SupportTicketDetail {
 
 
   final DateTime? updatedAt;
+
+
+
+  @JsonKey(
+    
+    name: r'client',
+    required: false,
+    includeIfNull: false,
+  )
+
+
+  final SupportTicketClient? client;
+
+
+
+      /// Dirección del servicio a domicilio (presente si aplica).
+  @JsonKey(
+    
+    name: r'service_address',
+    required: false,
+    includeIfNull: false,
+  )
+
+
+  final Address? serviceAddress;
 
 
 
@@ -409,6 +537,45 @@ class SupportTicketDetail {
 
 
 
+      /// Repuestos consumidos (descuentan inventario).
+  @JsonKey(
+    
+    name: r'parts',
+    required: false,
+    includeIfNull: false,
+  )
+
+
+  final List<TicketPart>? parts;
+
+
+
+      /// Visitas en sitio (check-in/out y reportes de servicio).
+  @JsonKey(
+    
+    name: r'visits',
+    required: false,
+    includeIfNull: false,
+  )
+
+
+  final List<TicketVisit>? visits;
+
+
+
+      /// Cotización vigente (la más reciente), si existe.
+  @JsonKey(
+    
+    name: r'quote',
+    required: false,
+    includeIfNull: false,
+  )
+
+
+  final TicketQuote? quote;
+
+
+
 
 
     @override
@@ -424,22 +591,33 @@ class SupportTicketDetail {
       other.description == description &&
       other.status == status &&
       other.channel == channel &&
+      other.serviceType == serviceType &&
+      other.serviceAddressId == serviceAddressId &&
+      other.scheduledAt == scheduledAt &&
+      other.scheduledWindowMinutes == scheduledWindowMinutes &&
       other.assignedUserId == assignedUserId &&
       other.assignedUserName == assignedUserName &&
       other.isWarrantyCovered == isWarrantyCovered &&
       other.slaDueAt == slaDueAt &&
+      other.slaStatus == slaStatus &&
       other.firstResponseAt == firstResponseAt &&
       other.resolvedAt == resolvedAt &&
       other.closedAt == closedAt &&
       other.rating == rating &&
+      other.ratingComment == ratingComment &&
       other.createdAt == createdAt &&
       other.updatedAt == updatedAt &&
+      other.client == client &&
+      other.serviceAddress == serviceAddress &&
       other.soldUnit == soldUnit &&
       other.messages == messages &&
       other.attachments == attachments &&
       other.statusHistory == statusHistory &&
       other.diagnosis == diagnosis &&
-      other.partsUsed == partsUsed;
+      other.partsUsed == partsUsed &&
+      other.parts == parts &&
+      other.visits == visits &&
+      other.quote == quote;
 
     @override
     int get hashCode =>
@@ -454,22 +632,33 @@ class SupportTicketDetail {
         description.hashCode +
         status.hashCode +
         channel.hashCode +
+        serviceType.hashCode +
+        serviceAddressId.hashCode +
+        scheduledAt.hashCode +
+        scheduledWindowMinutes.hashCode +
         assignedUserId.hashCode +
         assignedUserName.hashCode +
         isWarrantyCovered.hashCode +
         slaDueAt.hashCode +
+        slaStatus.hashCode +
         firstResponseAt.hashCode +
         resolvedAt.hashCode +
         closedAt.hashCode +
         rating.hashCode +
+        ratingComment.hashCode +
         createdAt.hashCode +
         updatedAt.hashCode +
+        client.hashCode +
+        serviceAddress.hashCode +
         soldUnit.hashCode +
         messages.hashCode +
         attachments.hashCode +
         statusHistory.hashCode +
         diagnosis.hashCode +
-        partsUsed.hashCode;
+        partsUsed.hashCode +
+        parts.hashCode +
+        visits.hashCode +
+        quote.hashCode;
 
   factory SupportTicketDetail.fromJson(Map<String, dynamic> json) => _$SupportTicketDetailFromJson(json);
 
@@ -481,4 +670,46 @@ class SupportTicketDetail {
   }
 
 }
+
+/// Tipo de servicio. Si es 'domicilio', service_address está presente.
+enum SupportTicketDetailServiceTypeEnum {
+    /// Tipo de servicio. Si es 'domicilio', service_address está presente.
+@JsonValue(r'remoto')
+remoto(r'remoto'),
+    /// Tipo de servicio. Si es 'domicilio', service_address está presente.
+@JsonValue(r'domicilio')
+domicilio(r'domicilio'),
+    /// Tipo de servicio. Si es 'domicilio', service_address está presente.
+@JsonValue(r'taller')
+taller(r'taller');
+
+const SupportTicketDetailServiceTypeEnum(this.value);
+
+final String value;
+
+@override
+String toString() => value;
+}
+
+
+/// Estado del SLA del ticket; null si está resuelto/cerrado/cancelado o sin SLA.
+enum SupportTicketDetailSlaStatusEnum {
+    /// Estado del SLA del ticket; null si está resuelto/cerrado/cancelado o sin SLA.
+@JsonValue(r'on_track')
+onTrack(r'on_track'),
+    /// Estado del SLA del ticket; null si está resuelto/cerrado/cancelado o sin SLA.
+@JsonValue(r'due_soon')
+dueSoon(r'due_soon'),
+    /// Estado del SLA del ticket; null si está resuelto/cerrado/cancelado o sin SLA.
+@JsonValue(r'breached')
+breached(r'breached');
+
+const SupportTicketDetailSlaStatusEnum(this.value);
+
+final String value;
+
+@override
+String toString() => value;
+}
+
 

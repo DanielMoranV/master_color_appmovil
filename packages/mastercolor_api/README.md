@@ -51,14 +51,13 @@ Please follow the [installation procedure](#installation--usage) and then run th
 import 'package:mastercolor_api/mastercolor_api.dart';
 
 
-final api = MastercolorApi().getClienteDispositivosApi();
-final DeviceTokenRequest deviceTokenRequest = ; // DeviceTokenRequest | 
+final api = MastercolorApi().getClienteDireccionesApi();
 
 try {
-    final response = await api.clientDevicesPost(deviceTokenRequest);
+    final response = await api.clientAddressesGet();
     print(response);
 } on DioException catch (e) {
-    print("Exception when calling ClienteDispositivosApi->clientDevicesPost: $e\n");
+    print("Exception when calling ClienteDireccionesApi->clientAddressesGet: $e\n");
 }
 
 ```
@@ -69,6 +68,7 @@ All URIs are relative to *http://localhost:8000/api*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
+[*ClienteDireccionesApi*](doc/ClienteDireccionesApi.md) | [**clientAddressesGet**](doc/ClienteDireccionesApi.md#clientaddressesget) | **GET** /client/addresses | Listar direcciones del cliente
 [*ClienteDispositivosApi*](doc/ClienteDispositivosApi.md) | [**clientDevicesPost**](doc/ClienteDispositivosApi.md#clientdevicespost) | **POST** /client/devices | Registrar token push (FCM) del cliente
 [*ClienteDispositivosApi*](doc/ClienteDispositivosApi.md) | [**clientDevicesTokenDelete**](doc/ClienteDispositivosApi.md#clientdevicestokendelete) | **DELETE** /client/devices/{token} | Eliminar token push (logout/desinstalación)
 [*ClienteProductosApi*](doc/ClienteProductosApi.md) | [**clientProductsGet**](doc/ClienteProductosApi.md#clientproductsget) | **GET** /client/products | Catálogo de productos (para registro manual de unidad)
@@ -76,6 +76,8 @@ Class | Method | HTTP request | Description
 [*ClienteTicketsApi*](doc/ClienteTicketsApi.md) | [**clientSupportTicketsIdAttachmentsPost**](doc/ClienteTicketsApi.md#clientsupportticketsidattachmentspost) | **POST** /client/support/tickets/{id}/attachments | Adjuntar archivos al ticket
 [*ClienteTicketsApi*](doc/ClienteTicketsApi.md) | [**clientSupportTicketsIdGet**](doc/ClienteTicketsApi.md#clientsupportticketsidget) | **GET** /client/support/tickets/{id} | Detalle de un ticket (con conversación)
 [*ClienteTicketsApi*](doc/ClienteTicketsApi.md) | [**clientSupportTicketsIdMessagesPost**](doc/ClienteTicketsApi.md#clientsupportticketsidmessagespost) | **POST** /client/support/tickets/{id}/messages | Enviar un mensaje en el ticket
+[*ClienteTicketsApi*](doc/ClienteTicketsApi.md) | [**clientSupportTicketsIdQuoteApprovePost**](doc/ClienteTicketsApi.md#clientsupportticketsidquoteapprovepost) | **POST** /client/support/tickets/{id}/quote/approve | Aprobar el presupuesto vigente
+[*ClienteTicketsApi*](doc/ClienteTicketsApi.md) | [**clientSupportTicketsIdQuoteRejectPost**](doc/ClienteTicketsApi.md#clientsupportticketsidquoterejectpost) | **POST** /client/support/tickets/{id}/quote/reject | Rechazar el presupuesto vigente
 [*ClienteTicketsApi*](doc/ClienteTicketsApi.md) | [**clientSupportTicketsIdRatePost**](doc/ClienteTicketsApi.md#clientsupportticketsidratepost) | **POST** /client/support/tickets/{id}/rate | Calificar la atención de un ticket resuelto
 [*ClienteTicketsApi*](doc/ClienteTicketsApi.md) | [**clientSupportTicketsIdReopenPut**](doc/ClienteTicketsApi.md#clientsupportticketsidreopenput) | **PUT** /client/support/tickets/{id}/reopen | Reabrir un ticket resuelto/cerrado
 [*ClienteTicketsApi*](doc/ClienteTicketsApi.md) | [**clientSupportTicketsPost**](doc/ClienteTicketsApi.md#clientsupportticketspost) | **POST** /client/support/tickets | Crear un ticket de soporte
@@ -88,27 +90,41 @@ Class | Method | HTTP request | Description
 [*StaffDispositivosApi*](doc/StaffDispositivosApi.md) | [**supportDevicesPost**](doc/StaffDispositivosApi.md#supportdevicespost) | **POST** /support/devices | Registrar token push (FCM) del staff
 [*StaffDispositivosApi*](doc/StaffDispositivosApi.md) | [**supportDevicesTokenDelete**](doc/StaffDispositivosApi.md#supportdevicestokendelete) | **DELETE** /support/devices/{token} | Eliminar token push del staff (logout/desinstalación)
 [*StaffMtricasApi*](doc/StaffMtricasApi.md) | [**supportMetricsGet**](doc/StaffMtricasApi.md#supportmetricsget) | **GET** /support/metrics | Indicadores del área de soporte
+[*StaffRepuestosApi*](doc/StaffRepuestosApi.md) | [**supportPartsGet**](doc/StaffRepuestosApi.md#supportpartsget) | **GET** /support/parts | Buscar repuestos del inventario
+[*StaffRepuestosApi*](doc/StaffRepuestosApi.md) | [**supportTicketsIdPartsPartIdDelete**](doc/StaffRepuestosApi.md#supportticketsidpartspartiddelete) | **DELETE** /support/tickets/{id}/parts/{partId} | Quitar repuesto (revierte el descuento de stock)
+[*StaffRepuestosApi*](doc/StaffRepuestosApi.md) | [**supportTicketsIdPartsPost**](doc/StaffRepuestosApi.md#supportticketsidpartspost) | **POST** /support/tickets/{id}/parts | Registrar repuesto consumido (descuenta inventario)
+[*StaffTicketsApi*](doc/StaffTicketsApi.md) | [**supportTicketsAgendaGet**](doc/StaffTicketsApi.md#supportticketsagendaget) | **GET** /support/tickets/agenda | Agenda del técnico autenticado
 [*StaffTicketsApi*](doc/StaffTicketsApi.md) | [**supportTicketsGet**](doc/StaffTicketsApi.md#supportticketsget) | **GET** /support/tickets | Listar/filtrar tickets (cola de soporte)
 [*StaffTicketsApi*](doc/StaffTicketsApi.md) | [**supportTicketsIdAssignPatch**](doc/StaffTicketsApi.md#supportticketsidassignpatch) | **PATCH** /support/tickets/{id}/assign | Asignar el ticket a un técnico
 [*StaffTicketsApi*](doc/StaffTicketsApi.md) | [**supportTicketsIdAttachmentsPost**](doc/StaffTicketsApi.md#supportticketsidattachmentspost) | **POST** /support/tickets/{id}/attachments | Adjuntar evidencia al ticket (foto de diagnóstico, etc.)
 [*StaffTicketsApi*](doc/StaffTicketsApi.md) | [**supportTicketsIdDiagnosisPost**](doc/StaffTicketsApi.md#supportticketsiddiagnosispost) | **POST** /support/tickets/{id}/diagnosis | Registrar diagnóstico técnico y cierre de servicio
 [*StaffTicketsApi*](doc/StaffTicketsApi.md) | [**supportTicketsIdGet**](doc/StaffTicketsApi.md#supportticketsidget) | **GET** /support/tickets/{id} | Detalle completo del ticket (incluye notas internas)
 [*StaffTicketsApi*](doc/StaffTicketsApi.md) | [**supportTicketsIdMessagesPost**](doc/StaffTicketsApi.md#supportticketsidmessagespost) | **POST** /support/tickets/{id}/messages | Responder o agregar nota interna
+[*StaffTicketsApi*](doc/StaffTicketsApi.md) | [**supportTicketsIdQuotePost**](doc/StaffTicketsApi.md#supportticketsidquotepost) | **POST** /support/tickets/{id}/quote | Crear presupuesto (servicio fuera de garantía)
+[*StaffTicketsApi*](doc/StaffTicketsApi.md) | [**supportTicketsIdSchedulePatch**](doc/StaffTicketsApi.md#supportticketsidschedulepatch) | **PATCH** /support/tickets/{id}/schedule | Programar/reprogramar la visita
 [*StaffTicketsApi*](doc/StaffTicketsApi.md) | [**supportTicketsIdStatusPatch**](doc/StaffTicketsApi.md#supportticketsidstatuspatch) | **PATCH** /support/tickets/{id}/status | Cambiar el estado del ticket
 [*StaffTicketsApi*](doc/StaffTicketsApi.md) | [**supportTicketsMineGet**](doc/StaffTicketsApi.md#supportticketsmineget) | **GET** /support/tickets/mine | Tickets asignados al técnico autenticado
+[*StaffTicketsApi*](doc/StaffTicketsApi.md) | [**supportTicketsSlaGet**](doc/StaffTicketsApi.md#supportticketsslaget) | **GET** /support/tickets/sla | Tickets por SLA (vencidos o por vencer)
 [*StaffUnidadesApi*](doc/StaffUnidadesApi.md) | [**supportUnitsGet**](doc/StaffUnidadesApi.md#supportunitsget) | **GET** /support/units | Buscar unidades vendidas
 [*StaffUnidadesApi*](doc/StaffUnidadesApi.md) | [**supportUnitsIdGet**](doc/StaffUnidadesApi.md#supportunitsidget) | **GET** /support/units/{id} | Detalle de una unidad (con historial de tickets)
+[*StaffUnidadesApi*](doc/StaffUnidadesApi.md) | [**supportUnitsIdHistoryGet**](doc/StaffUnidadesApi.md#supportunitsidhistoryget) | **GET** /support/units/{id}/history | Historial de servicio del equipo
 [*StaffUnidadesApi*](doc/StaffUnidadesApi.md) | [**supportUnitsIdPatch**](doc/StaffUnidadesApi.md#supportunitsidpatch) | **PATCH** /support/units/{id} | Actualizar una unidad (asignar nº de serie / estado)
 [*StaffUsuariosApi*](doc/StaffUsuariosApi.md) | [**supportTechniciansGet**](doc/StaffUsuariosApi.md#supporttechniciansget) | **GET** /support/technicians | Listar técnicos asignables
+[*StaffUsuariosApi*](doc/StaffUsuariosApi.md) | [**supportTechniciansMePatch**](doc/StaffUsuariosApi.md#supporttechniciansmepatch) | **PATCH** /support/technicians/me | Actualizar el perfil del técnico autenticado
+[*StaffVisitasApi*](doc/StaffVisitasApi.md) | [**supportTicketsIdCheckInPost**](doc/StaffVisitasApi.md#supportticketsidcheckinpost) | **POST** /support/tickets/{id}/check-in | Check-in de la visita (registra llegada con geolocalización)
+[*StaffVisitasApi*](doc/StaffVisitasApi.md) | [**supportTicketsIdCheckOutPost**](doc/StaffVisitasApi.md#supportticketsidcheckoutpost) | **POST** /support/tickets/{id}/check-out | Check-out de la visita (registra salida con geolocalización)
+[*StaffVisitasApi*](doc/StaffVisitasApi.md) | [**supportTicketsIdServiceReportPost**](doc/StaffVisitasApi.md#supportticketsidservicereportpost) | **POST** /support/tickets/{id}/service-report | Reporte de servicio / acta de conformidad con firma
 
 
 ## Documentation For Models
 
+ - [Address](doc/Address.md)
  - [ApiError](doc/ApiError.md)
  - [ApiSuccess](doc/ApiSuccess.md)
  - [AuthMeGet200Response](doc/AuthMeGet200Response.md)
  - [AuthMeGet200ResponseAllOfData](doc/AuthMeGet200ResponseAllOfData.md)
  - [AuthorType](doc/AuthorType.md)
+ - [ClientAddressesGet200Response](doc/ClientAddressesGet200Response.md)
  - [ClientAuthMeGet200Response](doc/ClientAuthMeGet200Response.md)
  - [ClientAuthMeGet200ResponseAllOfData](doc/ClientAuthMeGet200ResponseAllOfData.md)
  - [ClientProduct](doc/ClientProduct.md)
@@ -130,6 +146,9 @@ Class | Method | HTTP request | Description
  - [DeviceTokenRequest](doc/DeviceTokenRequest.md)
  - [DiagnosisRequest](doc/DiagnosisRequest.md)
  - [Pagination](doc/Pagination.md)
+ - [ServiceHistoryEvent](doc/ServiceHistoryEvent.md)
+ - [ServiceReportRequest](doc/ServiceReportRequest.md)
+ - [ServiceReportRequestPartsInner](doc/ServiceReportRequestPartsInner.md)
  - [SoldUnit](doc/SoldUnit.md)
  - [SoldUnitDetail](doc/SoldUnitDetail.md)
  - [SoldUnitStatus](doc/SoldUnitStatus.md)
@@ -138,23 +157,40 @@ Class | Method | HTTP request | Description
  - [SupportMetrics](doc/SupportMetrics.md)
  - [SupportMetricsByTechnicianInner](doc/SupportMetricsByTechnicianInner.md)
  - [SupportMetricsGet200Response](doc/SupportMetricsGet200Response.md)
+ - [SupportPartsGet200Response](doc/SupportPartsGet200Response.md)
+ - [SupportPartsGet200ResponseAllOfDataInner](doc/SupportPartsGet200ResponseAllOfDataInner.md)
  - [SupportTechniciansGet200Response](doc/SupportTechniciansGet200Response.md)
+ - [SupportTechniciansMePatch200Response](doc/SupportTechniciansMePatch200Response.md)
  - [SupportTicket](doc/SupportTicket.md)
+ - [SupportTicketClient](doc/SupportTicketClient.md)
  - [SupportTicketDetail](doc/SupportTicketDetail.md)
+ - [SupportTicketsAgendaGet200Response](doc/SupportTicketsAgendaGet200Response.md)
  - [SupportTicketsIdAssignPatchRequest](doc/SupportTicketsIdAssignPatchRequest.md)
+ - [SupportTicketsIdCheckInPost201Response](doc/SupportTicketsIdCheckInPost201Response.md)
  - [SupportTicketsIdMessagesPostRequest](doc/SupportTicketsIdMessagesPostRequest.md)
+ - [SupportTicketsIdPartsPost201Response](doc/SupportTicketsIdPartsPost201Response.md)
  - [SupportTicketsIdStatusPatchRequest](doc/SupportTicketsIdStatusPatchRequest.md)
+ - [SupportUnitsIdHistoryGet200Response](doc/SupportUnitsIdHistoryGet200Response.md)
+ - [SupportUnitsIdHistoryGet200ResponseAllOfData](doc/SupportUnitsIdHistoryGet200ResponseAllOfData.md)
  - [SupportUnitsIdPatchRequest](doc/SupportUnitsIdPatchRequest.md)
  - [Technician](doc/Technician.md)
+ - [TechnicianProfileRequest](doc/TechnicianProfileRequest.md)
  - [TicketAttachment](doc/TicketAttachment.md)
  - [TicketCategory](doc/TicketCategory.md)
  - [TicketChannel](doc/TicketChannel.md)
  - [TicketCreateRequest](doc/TicketCreateRequest.md)
  - [TicketMessage](doc/TicketMessage.md)
+ - [TicketPart](doc/TicketPart.md)
+ - [TicketPartAddRequest](doc/TicketPartAddRequest.md)
  - [TicketPriority](doc/TicketPriority.md)
+ - [TicketQuote](doc/TicketQuote.md)
+ - [TicketQuoteCreateRequest](doc/TicketQuoteCreateRequest.md)
+ - [TicketScheduleRequest](doc/TicketScheduleRequest.md)
  - [TicketStatus](doc/TicketStatus.md)
  - [TicketStatusHistory](doc/TicketStatusHistory.md)
+ - [TicketVisit](doc/TicketVisit.md)
  - [ValidationError](doc/ValidationError.md)
+ - [VisitCheckRequest](doc/VisitCheckRequest.md)
  - [Warranty](doc/Warranty.md)
 
 

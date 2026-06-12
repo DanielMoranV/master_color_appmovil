@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mastercolor_api/mastercolor_api.dart';
 
 import '../../core/network/api_exception.dart';
@@ -37,6 +38,11 @@ class StaffUnitDetailScreen extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('Unidad'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.history),
+            tooltip: 'Historial de servicio',
+            onPressed: () => context.push('/staff/units/$unitId/history'),
+          ),
           detailAsync.maybeWhen(
             data: (unit) => IconButton(
               icon: const Icon(Icons.edit_outlined),

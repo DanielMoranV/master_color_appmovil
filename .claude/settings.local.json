@@ -15,7 +15,24 @@
       "Bash(~/Android/Sdk/emulator/emulator *)",
       "Bash(~/Android/Sdk/platform-tools/adb get-state *)",
       "Read(//home/maeldev/Code/appMasterColor/**)",
-      "Bash(sed -n '1,80p' master_color_api/app/Http/Resources/SupportTicketResource.php)"
+      "Bash(sed -n '1,80p' master_color_api/app/Http/Resources/SupportTicketResource.php)",
+      "Bash(npx @openapitools/openapi-generator-cli generate -i /home/maeldev/Code/appMasterColor/master_color_api/docs/openapi/support-api.yaml -g dart-dio -o packages/mastercolor_api --additional-properties=pubName=mastercolor_api,serializationLibrary=json_serializable)",
+      "Bash(dart run *)",
+      "Bash(grep -nA2 \"/client/addresses\" ../master_color_api/docs/openapi/support-api.yaml)",
+      "Bash(grep -nA10 \"Future<Response<ClientAddressesGet200Response>> clientAddressesGet\" packages/mastercolor_api/lib/src/api/cliente_direcciones_api.dart)",
+      "Bash(grep -nA20 \"create\" lib/features/tickets/tickets_repository.dart)",
+      "Bash(grep -nA12 \"enum TicketCreateRequestServiceTypeEnum\" packages/mastercolor_api/lib/src/model/ticket_create_request.dart)",
+      "Bash(grep -nA6 \"supportTicketsIdSchedulePatch\\(\" packages/mastercolor_api/lib/src/api/staff_tickets_api.dart)",
+      "Bash(grep -nA8 \"supportTicketsAgendaGet\\(\" packages/mastercolor_api/lib/src/api/staff_tickets_api.dart)",
+      "Bash(grep -nA3 \"date != null\" packages/mastercolor_api/lib/src/api/staff_tickets_api.dart)",
+      "Bash(grep -nA4 \"ticketsRepositoryProvider = Provider\" lib/features/tickets/tickets_repository.dart)",
+      "Bash(grep -nA3 \"clientSupportTicketsIdQuoteApprovePost\\({\" packages/mastercolor_api/lib/src/api/cliente_tickets_api.dart)",
+      "Bash(grep -nA10 \"supportTechniciansGet\\({\" packages/mastercolor_api/lib/src/api/staff_usuarios_api.dart)",
+      "Bash(grep -nA3 \"supportTechniciansMePatch\\({\" packages/mastercolor_api/lib/src/api/staff_usuarios_api.dart)",
+      "Bash(grep -nA12 \"listTechnicians\" lib/features/tickets/tickets_repository.dart)",
+      "Bash(grep -nA6 \"supportTicketsSlaGet\\({\" packages/mastercolor_api/lib/src/api/staff_tickets_api.dart)",
+      "Bash(grep -nA4 \"supportUnitsIdHistoryGet\\({\" packages/mastercolor_api/lib/src/api/staff_unidades_api.dart)",
+      "Skill(run)"
     ]
   }
 }

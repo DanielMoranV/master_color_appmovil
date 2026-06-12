@@ -17,6 +17,12 @@ abstract class _$TicketCreateRequestCWProxy {
 
   TicketCreateRequest description(String description);
 
+  TicketCreateRequest serviceType(
+    TicketCreateRequestServiceTypeEnum? serviceType,
+  );
+
+  TicketCreateRequest serviceAddressId(int? serviceAddressId);
+
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `TicketCreateRequest(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -29,6 +35,8 @@ abstract class _$TicketCreateRequestCWProxy {
     TicketPriority? priority,
     String subject,
     String description,
+    TicketCreateRequestServiceTypeEnum? serviceType,
+    int? serviceAddressId,
   });
 }
 
@@ -58,6 +66,15 @@ class _$TicketCreateRequestCWProxyImpl implements _$TicketCreateRequestCWProxy {
       this(description: description);
 
   @override
+  TicketCreateRequest serviceType(
+    TicketCreateRequestServiceTypeEnum? serviceType,
+  ) => this(serviceType: serviceType);
+
+  @override
+  TicketCreateRequest serviceAddressId(int? serviceAddressId) =>
+      this(serviceAddressId: serviceAddressId);
+
+  @override
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `TicketCreateRequest(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -70,6 +87,8 @@ class _$TicketCreateRequestCWProxyImpl implements _$TicketCreateRequestCWProxy {
     Object? priority = const $CopyWithPlaceholder(),
     Object? subject = const $CopyWithPlaceholder(),
     Object? description = const $CopyWithPlaceholder(),
+    Object? serviceType = const $CopyWithPlaceholder(),
+    Object? serviceAddressId = const $CopyWithPlaceholder(),
   }) {
     return TicketCreateRequest(
       soldUnitId: soldUnitId == const $CopyWithPlaceholder()
@@ -92,6 +111,14 @@ class _$TicketCreateRequestCWProxyImpl implements _$TicketCreateRequestCWProxy {
           ? _value.description
           // ignore: cast_nullable_to_non_nullable
           : description as String,
+      serviceType: serviceType == const $CopyWithPlaceholder()
+          ? _value.serviceType
+          // ignore: cast_nullable_to_non_nullable
+          : serviceType as TicketCreateRequestServiceTypeEnum?,
+      serviceAddressId: serviceAddressId == const $CopyWithPlaceholder()
+          ? _value.serviceAddressId
+          // ignore: cast_nullable_to_non_nullable
+          : serviceAddressId as int?,
     );
   }
 }
@@ -107,25 +134,52 @@ extension $TicketCreateRequestCopyWith on TicketCreateRequest {
 // JsonSerializableGenerator
 // **************************************************************************
 
-TicketCreateRequest _$TicketCreateRequestFromJson(
-  Map<String, dynamic> json,
-) => $checkedCreate('TicketCreateRequest', json, ($checkedConvert) {
-  $checkKeys(json, requiredKeys: const ['category', 'subject', 'description']);
-  final val = TicketCreateRequest(
-    soldUnitId: $checkedConvert('sold_unit_id', (v) => (v as num?)?.toInt()),
-    category: $checkedConvert(
-      'category',
-      (v) => $enumDecode(_$TicketCategoryEnumMap, v),
-    ),
-    priority: $checkedConvert(
-      'priority',
-      (v) => $enumDecodeNullable(_$TicketPriorityEnumMap, v),
-    ),
-    subject: $checkedConvert('subject', (v) => v as String),
-    description: $checkedConvert('description', (v) => v as String),
-  );
-  return val;
-}, fieldKeyMap: const {'soldUnitId': 'sold_unit_id'});
+TicketCreateRequest _$TicketCreateRequestFromJson(Map<String, dynamic> json) =>
+    $checkedCreate(
+      'TicketCreateRequest',
+      json,
+      ($checkedConvert) {
+        $checkKeys(
+          json,
+          requiredKeys: const ['category', 'subject', 'description'],
+        );
+        final val = TicketCreateRequest(
+          soldUnitId: $checkedConvert(
+            'sold_unit_id',
+            (v) => (v as num?)?.toInt(),
+          ),
+          category: $checkedConvert(
+            'category',
+            (v) => $enumDecode(_$TicketCategoryEnumMap, v),
+          ),
+          priority: $checkedConvert(
+            'priority',
+            (v) => $enumDecodeNullable(_$TicketPriorityEnumMap, v),
+          ),
+          subject: $checkedConvert('subject', (v) => v as String),
+          description: $checkedConvert('description', (v) => v as String),
+          serviceType: $checkedConvert(
+            'service_type',
+            (v) =>
+                $enumDecodeNullable(
+                  _$TicketCreateRequestServiceTypeEnumEnumMap,
+                  v,
+                ) ??
+                'remoto',
+          ),
+          serviceAddressId: $checkedConvert(
+            'service_address_id',
+            (v) => (v as num?)?.toInt(),
+          ),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'soldUnitId': 'sold_unit_id',
+        'serviceType': 'service_type',
+        'serviceAddressId': 'service_address_id',
+      },
+    );
 
 Map<String, dynamic> _$TicketCreateRequestToJson(
   TicketCreateRequest instance,
@@ -135,6 +189,9 @@ Map<String, dynamic> _$TicketCreateRequestToJson(
   'priority': ?_$TicketPriorityEnumMap[instance.priority],
   'subject': instance.subject,
   'description': instance.description,
+  'service_type':
+      ?_$TicketCreateRequestServiceTypeEnumEnumMap[instance.serviceType],
+  'service_address_id': ?instance.serviceAddressId,
 };
 
 const _$TicketCategoryEnumMap = {
@@ -150,4 +207,10 @@ const _$TicketPriorityEnumMap = {
   TicketPriority.media: 'media',
   TicketPriority.alta: 'alta',
   TicketPriority.urgente: 'urgente',
+};
+
+const _$TicketCreateRequestServiceTypeEnumEnumMap = {
+  TicketCreateRequestServiceTypeEnum.remoto: 'remoto',
+  TicketCreateRequestServiceTypeEnum.domicilio: 'domicilio',
+  TicketCreateRequestServiceTypeEnum.taller: 'taller',
 };

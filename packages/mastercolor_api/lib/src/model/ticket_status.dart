@@ -15,6 +15,8 @@ enum TicketStatus {
       enProceso(r'en_proceso'),
       @JsonValue(r'en_espera_cliente')
       enEsperaCliente(r'en_espera_cliente'),
+      @JsonValue(r'en_espera_aprobacion')
+      enEsperaAprobacion(r'en_espera_aprobacion'),
       @JsonValue(r'resuelto')
       resuelto(r'resuelto'),
       @JsonValue(r'cerrado')

@@ -7,6 +7,7 @@ import 'package:mastercolor_api/src/auth/api_key_auth.dart';
 import 'package:mastercolor_api/src/auth/basic_auth.dart';
 import 'package:mastercolor_api/src/auth/bearer_auth.dart';
 import 'package:mastercolor_api/src/auth/oauth.dart';
+import 'package:mastercolor_api/src/api/cliente_direcciones_api.dart';
 import 'package:mastercolor_api/src/api/cliente_dispositivos_api.dart';
 import 'package:mastercolor_api/src/api/cliente_productos_api.dart';
 import 'package:mastercolor_api/src/api/cliente_tickets_api.dart';
@@ -14,9 +15,11 @@ import 'package:mastercolor_api/src/api/cliente_unidades_api.dart';
 import 'package:mastercolor_api/src/api/sesin_api.dart';
 import 'package:mastercolor_api/src/api/staff_dispositivos_api.dart';
 import 'package:mastercolor_api/src/api/staff_mtricas_api.dart';
+import 'package:mastercolor_api/src/api/staff_repuestos_api.dart';
 import 'package:mastercolor_api/src/api/staff_tickets_api.dart';
 import 'package:mastercolor_api/src/api/staff_unidades_api.dart';
 import 'package:mastercolor_api/src/api/staff_usuarios_api.dart';
+import 'package:mastercolor_api/src/api/staff_visitas_api.dart';
 
 class MastercolorApi {
   static const String basePath = r'http://localhost:8000/api';
@@ -109,6 +112,12 @@ class MastercolorApi {
     }
   }
 
+  /// Get ClienteDireccionesApi instance, base route and serializer can be overridden by a given but be careful,
+  /// by doing that all interceptors will not be executed
+  ClienteDireccionesApi getClienteDireccionesApi() {
+    return ClienteDireccionesApi(dio);
+  }
+
   /// Get ClienteDispositivosApi instance, base route and serializer can be overridden by a given but be careful,
   /// by doing that all interceptors will not be executed
   ClienteDispositivosApi getClienteDispositivosApi() {
@@ -151,6 +160,12 @@ class MastercolorApi {
     return StaffMtricasApi(dio);
   }
 
+  /// Get StaffRepuestosApi instance, base route and serializer can be overridden by a given but be careful,
+  /// by doing that all interceptors will not be executed
+  StaffRepuestosApi getStaffRepuestosApi() {
+    return StaffRepuestosApi(dio);
+  }
+
   /// Get StaffTicketsApi instance, base route and serializer can be overridden by a given but be careful,
   /// by doing that all interceptors will not be executed
   StaffTicketsApi getStaffTicketsApi() {
@@ -167,5 +182,11 @@ class MastercolorApi {
   /// by doing that all interceptors will not be executed
   StaffUsuariosApi getStaffUsuariosApi() {
     return StaffUsuariosApi(dio);
+  }
+
+  /// Get StaffVisitasApi instance, base route and serializer can be overridden by a given but be careful,
+  /// by doing that all interceptors will not be executed
+  StaffVisitasApi getStaffVisitasApi() {
+    return StaffVisitasApi(dio);
   }
 }

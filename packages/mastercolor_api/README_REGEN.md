@@ -41,3 +41,8 @@ flutter pub get
   sobrescribe `pubspec.yaml`.
 - El cliente se integra con el Dio autenticado de la app vía
   `lib/core/network/mastercolor_api_provider.dart` (hereda auth + refresh).
+- **Parche post-regen obligatorio** (`lib/src/model/service_report_request.dart`):
+  el campo `photos` se genera como `List<MultipartFile>` con un `@JsonKey` normal,
+  y `json_serializable` no puede generar `fromJson` para `MultipartFile` → falla el
+  build_runner. Cambiar su anotación a `@JsonKey(ignore: true)` (igual que
+  `clientSignatureFile`); las fotos viajan por multipart, no por JSON.

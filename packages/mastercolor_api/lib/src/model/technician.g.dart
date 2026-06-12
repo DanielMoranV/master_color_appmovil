@@ -13,7 +13,15 @@ abstract class _$TechnicianCWProxy {
 
   Technician email(String? email);
 
+  Technician phone(String? phone);
+
   Technician active(bool? active);
+
+  Technician isAvailable(bool? isAvailable);
+
+  Technician specialties(List<TechnicianSpecialtiesEnum>? specialties);
+
+  Technician coverageZones(List<String>? coverageZones);
 
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `Technician(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
@@ -21,7 +29,16 @@ abstract class _$TechnicianCWProxy {
   /// ```dart
   /// Technician(...).copyWith(id: 12, name: "My name")
   /// ````
-  Technician call({int? id, String? name, String? email, bool? active});
+  Technician call({
+    int? id,
+    String? name,
+    String? email,
+    String? phone,
+    bool? active,
+    bool? isAvailable,
+    List<TechnicianSpecialtiesEnum>? specialties,
+    List<String>? coverageZones,
+  });
 }
 
 /// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfTechnician.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfTechnician.copyWith.fieldName(...)`
@@ -40,7 +57,21 @@ class _$TechnicianCWProxyImpl implements _$TechnicianCWProxy {
   Technician email(String? email) => this(email: email);
 
   @override
+  Technician phone(String? phone) => this(phone: phone);
+
+  @override
   Technician active(bool? active) => this(active: active);
+
+  @override
+  Technician isAvailable(bool? isAvailable) => this(isAvailable: isAvailable);
+
+  @override
+  Technician specialties(List<TechnicianSpecialtiesEnum>? specialties) =>
+      this(specialties: specialties);
+
+  @override
+  Technician coverageZones(List<String>? coverageZones) =>
+      this(coverageZones: coverageZones);
 
   @override
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `Technician(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
@@ -53,7 +84,11 @@ class _$TechnicianCWProxyImpl implements _$TechnicianCWProxy {
     Object? id = const $CopyWithPlaceholder(),
     Object? name = const $CopyWithPlaceholder(),
     Object? email = const $CopyWithPlaceholder(),
+    Object? phone = const $CopyWithPlaceholder(),
     Object? active = const $CopyWithPlaceholder(),
+    Object? isAvailable = const $CopyWithPlaceholder(),
+    Object? specialties = const $CopyWithPlaceholder(),
+    Object? coverageZones = const $CopyWithPlaceholder(),
   }) {
     return Technician(
       id: id == const $CopyWithPlaceholder()
@@ -68,10 +103,26 @@ class _$TechnicianCWProxyImpl implements _$TechnicianCWProxy {
           ? _value.email
           // ignore: cast_nullable_to_non_nullable
           : email as String?,
+      phone: phone == const $CopyWithPlaceholder()
+          ? _value.phone
+          // ignore: cast_nullable_to_non_nullable
+          : phone as String?,
       active: active == const $CopyWithPlaceholder()
           ? _value.active
           // ignore: cast_nullable_to_non_nullable
           : active as bool?,
+      isAvailable: isAvailable == const $CopyWithPlaceholder()
+          ? _value.isAvailable
+          // ignore: cast_nullable_to_non_nullable
+          : isAvailable as bool?,
+      specialties: specialties == const $CopyWithPlaceholder()
+          ? _value.specialties
+          // ignore: cast_nullable_to_non_nullable
+          : specialties as List<TechnicianSpecialtiesEnum>?,
+      coverageZones: coverageZones == const $CopyWithPlaceholder()
+          ? _value.coverageZones
+          // ignore: cast_nullable_to_non_nullable
+          : coverageZones as List<String>?,
     );
   }
 }
@@ -86,21 +137,54 @@ extension $TechnicianCopyWith on Technician {
 // JsonSerializableGenerator
 // **************************************************************************
 
-Technician _$TechnicianFromJson(Map<String, dynamic> json) =>
-    $checkedCreate('Technician', json, ($checkedConvert) {
-      final val = Technician(
-        id: $checkedConvert('id', (v) => (v as num?)?.toInt()),
-        name: $checkedConvert('name', (v) => v as String?),
-        email: $checkedConvert('email', (v) => v as String?),
-        active: $checkedConvert('active', (v) => v as bool?),
-      );
-      return val;
-    });
+Technician _$TechnicianFromJson(Map<String, dynamic> json) => $checkedCreate(
+  'Technician',
+  json,
+  ($checkedConvert) {
+    final val = Technician(
+      id: $checkedConvert('id', (v) => (v as num?)?.toInt()),
+      name: $checkedConvert('name', (v) => v as String?),
+      email: $checkedConvert('email', (v) => v as String?),
+      phone: $checkedConvert('phone', (v) => v as String?),
+      active: $checkedConvert('active', (v) => v as bool?),
+      isAvailable: $checkedConvert('is_available', (v) => v as bool?),
+      specialties: $checkedConvert(
+        'specialties',
+        (v) => (v as List<dynamic>?)
+            ?.map((e) => $enumDecode(_$TechnicianSpecialtiesEnumEnumMap, e))
+            .toList(),
+      ),
+      coverageZones: $checkedConvert(
+        'coverage_zones',
+        (v) => (v as List<dynamic>?)?.map((e) => e as String).toList(),
+      ),
+    );
+    return val;
+  },
+  fieldKeyMap: const {
+    'isAvailable': 'is_available',
+    'coverageZones': 'coverage_zones',
+  },
+);
 
 Map<String, dynamic> _$TechnicianToJson(Technician instance) =>
     <String, dynamic>{
       'id': ?instance.id,
       'name': ?instance.name,
       'email': ?instance.email,
+      'phone': ?instance.phone,
       'active': ?instance.active,
+      'is_available': ?instance.isAvailable,
+      'specialties': ?instance.specialties
+          ?.map((e) => _$TechnicianSpecialtiesEnumEnumMap[e]!)
+          .toList(),
+      'coverage_zones': ?instance.coverageZones,
     };
+
+const _$TechnicianSpecialtiesEnumEnumMap = {
+  TechnicianSpecialtiesEnum.garantia: 'garantia',
+  TechnicianSpecialtiesEnum.instalacion: 'instalacion',
+  TechnicianSpecialtiesEnum.falla: 'falla',
+  TechnicianSpecialtiesEnum.consulta: 'consulta',
+  TechnicianSpecialtiesEnum.otro: 'otro',
+};

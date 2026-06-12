@@ -5,11 +5,14 @@ import 'package:mastercolor_api/mastercolor_api.dart';
 
 import '../../core/auth/auth_controller.dart';
 import '../../core/auth/session.dart';
+import '../../core/launchers.dart';
 import '../../core/network/api_exception.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../units/unit_presentation.dart' show StatusChip;
+import '../visits/service_report_screen.dart';
 import 'client_ticket_actions.dart';
+import 'parts_actions.dart';
 import 'staff_ticket_actions.dart';
 import 'ticket_attachments.dart';
 import 'ticket_presentation.dart';
@@ -125,6 +128,149 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
     }
   }
 
+  Future<void> _createQuote() async {
+    final ok = await showQuoteDialog(context, ticketId: _id);
+    if (ok) {
+      ref.invalidate(ticketDetailProvider(_id));
+      ref.read(ticketsControllerProvider.notifier).refresh();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Cotización enviada al cliente.')),
+        );
+      }
+    }
+  }
+
+  Future<void> _decideQuote({required bool approve}) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text(approve ? 'Aprobar cotización' : 'Rechazar cotización'),
+        content: Text(approve
+            ? '¿Aprobar el presupuesto para continuar con el servicio?'
+            : '¿Rechazar el presupuesto?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(approve ? 'Aprobar' : 'Rechazar'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+    try {
+      final repo = ref.read(ticketsRepositoryProvider);
+      approve ? await repo.approveQuote(_id) : await repo.rejectQuote(_id);
+      ref.invalidate(ticketDetailProvider(_id));
+      ref.read(ticketsControllerProvider.notifier).refresh();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+                approve ? 'Cotización aprobada.' : 'Cotización rechazada.'),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        _showError(e, fallback: 'No se pudo procesar la cotización.');
+      }
+    }
+  }
+
+  Future<void> _addPart() async {
+    final ok = await showAddPartDialog(context, ticketId: _id);
+    if (ok) {
+      ref.invalidate(ticketDetailProvider(_id));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Repuesto agregado.')),
+        );
+      }
+    }
+  }
+
+  Future<void> _removePart(int partId) async {
+    try {
+      await ref.read(ticketsRepositoryProvider).removePart(id: _id, partId: partId);
+      ref.invalidate(ticketDetailProvider(_id));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Repuesto quitado.')),
+        );
+      }
+    } catch (e) {
+      if (mounted) _showError(e, fallback: 'No se pudo quitar el repuesto.');
+    }
+  }
+
+  Future<void> _checkIn() async {
+    try {
+      await ref.read(ticketsRepositoryProvider).checkIn(id: _id);
+      ref.invalidate(ticketDetailProvider(_id));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Llegada registrada (check-in).')),
+        );
+      }
+    } catch (e) {
+      if (mounted) _showError(e, fallback: 'No se pudo registrar el check-in.');
+    }
+  }
+
+  Future<void> _checkOut() async {
+    try {
+      await ref.read(ticketsRepositoryProvider).checkOut(id: _id);
+      ref.invalidate(ticketDetailProvider(_id));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Salida registrada (check-out).')),
+        );
+      }
+    } catch (e) {
+      if (mounted) _showError(e, fallback: 'No se pudo registrar el check-out.');
+    }
+  }
+
+  Future<void> _openServiceReport() async {
+    final ok = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (_) => ServiceReportScreen(ticketId: _id),
+      ),
+    );
+    if (ok == true) {
+      ref.invalidate(ticketDetailProvider(_id));
+      ref.read(ticketsControllerProvider.notifier).refresh();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Acta registrada.')),
+        );
+      }
+    }
+  }
+
+  Future<void> _schedule(SupportTicketDetail ticket) async {
+    final ok = await showScheduleDialog(
+      context,
+      ticketId: _id,
+      current: ticket.scheduledAt,
+      currentWindowMinutes: ticket.scheduledWindowMinutes,
+    );
+    if (ok) {
+      ref.invalidate(ticketDetailProvider(_id));
+      ref.read(ticketsControllerProvider.notifier).refresh();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Visita programada.')),
+        );
+      }
+    }
+  }
+
   Future<void> _rate() async {
     final ok = await showRateDialog(context, ticketId: _id);
     if (ok) {
@@ -168,15 +314,33 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
         title: const Text('Ticket'),
         actions: [
           if (isStaff) ...[
-            IconButton(
-              icon: const Icon(Icons.person_add_alt),
-              tooltip: 'Asignar técnico',
-              onPressed: _assign,
-            ),
-            IconButton(
-              icon: const Icon(Icons.medical_services_outlined),
-              tooltip: 'Diagnóstico',
-              onPressed: _diagnose,
+            // Asignar / diagnosticar / programar solo tienen sentido mientras el
+            // ticket no es terminal; el backend rechazaría (409) si no.
+            detailAsync.maybeWhen(
+              data: (t) {
+                if (t.status?.isClosed ?? false) return const SizedBox.shrink();
+                return Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.person_add_alt),
+                      tooltip: 'Asignar técnico',
+                      onPressed: _assign,
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.medical_services_outlined),
+                      tooltip: 'Diagnóstico',
+                      onPressed: _diagnose,
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.event_outlined),
+                      tooltip: 'Programar visita',
+                      onPressed: () => _schedule(t),
+                    ),
+                  ],
+                );
+              },
+              orElse: () => const SizedBox.shrink(),
             ),
             detailAsync.maybeWhen(
               data: (t) {
@@ -271,6 +435,40 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
                     padding: const EdgeInsets.all(16),
                     children: [
                       _Header(ticket: ticket),
+                      const SizedBox(height: 16),
+                      _ServiceCard(ticket: ticket),
+                      if (isStaff && ticket.client != null) ...[
+                        const SizedBox(height: 16),
+                        _ClientContactCard(client: ticket.client!),
+                      ],
+                      if (isStaff) ...[
+                        const SizedBox(height: 16),
+                        _VisitsSection(
+                          visits: ticket.visits ?? const [],
+                          ticketClosed: closed,
+                          onCheckIn: _checkIn,
+                          onCheckOut: _checkOut,
+                          onServiceReport: _openServiceReport,
+                        ),
+                        const SizedBox(height: 16),
+                        _PartsSection(
+                          parts: ticket.parts ?? const [],
+                          ticketClosed: closed,
+                          onAdd: _addPart,
+                          onRemove: _removePart,
+                        ),
+                      ],
+                      if (ticket.quote != null || (isStaff && !closed)) ...[
+                        const SizedBox(height: 16),
+                        _QuoteCard(
+                          quote: ticket.quote,
+                          isStaff: isStaff,
+                          ticketClosed: closed,
+                          onCreate: _createQuote,
+                          onApprove: () => _decideQuote(approve: true),
+                          onReject: () => _decideQuote(approve: false),
+                        ),
+                      ],
                       if (ticket.diagnosis != null &&
                           ticket.diagnosis!.isNotEmpty) ...[
                         const SizedBox(height: 16),
@@ -405,6 +603,8 @@ class _Header extends StatelessWidget {
                     color: Colors.green,
                     icon: Icons.verified_outlined,
                   ),
+                if (slaPresentation(ticket.slaStatus?.value) case final sla?)
+                  StatusChip(label: sla.label, color: sla.color, icon: sla.icon),
               ],
             ),
             if (ticket.assignedUserName != null) ...[
@@ -417,6 +617,526 @@ class _Header extends StatelessWidget {
                 ],
               ),
             ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Tipo de servicio y, si es a domicilio, la dirección con botón "Cómo llegar".
+class _ServiceCard extends StatelessWidget {
+  const _ServiceCard({required this.ticket});
+
+  final SupportTicketDetail ticket;
+
+  static final _scheduleFormat = DateFormat('EEE d MMM · HH:mm', 'es');
+
+  @override
+  Widget build(BuildContext context) {
+    final type = ticket.serviceType;
+    final address = ticket.serviceAddress;
+    final isHome =
+        type == SupportTicketDetailServiceTypeEnum.domicilio && address != null;
+    final scheduled = ticket.scheduledAt?.toLocal();
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(type?.icon ?? Icons.build_outlined, size: 18),
+                const SizedBox(width: 8),
+                Text('Servicio ${type?.label.toLowerCase() ?? '—'}',
+                    style: Theme.of(context).textTheme.titleMedium),
+              ],
+            ),
+            if (scheduled != null) ...[
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  const Icon(Icons.event_outlined,
+                      size: 16, color: Colors.grey),
+                  const SizedBox(width: 6),
+                  Text(
+                    'Visita: ${_scheduleFormat.format(scheduled)}'
+                    '${ticket.scheduledWindowMinutes != null ? ' (${ticket.scheduledWindowMinutes}min)' : ''}',
+                  ),
+                ],
+              ),
+            ],
+            if (isHome) ...[
+              const SizedBox(height: 12),
+              Text(address.addressFull ?? '—'),
+              if ([address.district, address.province, address.department]
+                  .any((e) => e != null && e.isNotEmpty))
+                Padding(
+                  padding: const EdgeInsets.only(top: 2),
+                  child: Text(
+                    [address.district, address.province, address.department]
+                        .where((e) => e != null && e.isNotEmpty)
+                        .join(', '),
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ),
+              if (address.reference != null && address.reference!.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: Text('Ref.: ${address.reference}',
+                      style: const TextStyle(fontStyle: FontStyle.italic)),
+                ),
+              const SizedBox(height: 12),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: FilledButton.tonalIcon(
+                  icon: const Icon(Icons.directions),
+                  label: const Text('Cómo llegar'),
+                  onPressed: () async {
+                    final ok = await openDirections(
+                      latitude: address.latitude,
+                      longitude: address.longitude,
+                      fallbackQuery: address.addressFull,
+                    );
+                    if (!ok && context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('No se pudo abrir el mapa.'),
+                        ),
+                      );
+                    }
+                  },
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Datos de contacto del cliente (solo staff): correo y teléfono accionables.
+class _ClientContactCard extends StatelessWidget {
+  const _ClientContactCard({required this.client});
+
+  final SupportTicketClient client;
+
+  @override
+  Widget build(BuildContext context) {
+    final phone = client.phone;
+    final email = client.email;
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(Icons.person_outline, size: 18),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(client.name ?? 'Cliente',
+                      style: Theme.of(context).textTheme.titleMedium),
+                ),
+              ],
+            ),
+            if (phone != null && phone.isNotEmpty)
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                dense: true,
+                leading: const Icon(Icons.phone_outlined),
+                title: Text(phone),
+                trailing: const Icon(Icons.call, size: 18),
+                onTap: () => openPhone(phone),
+              ),
+            if (email != null && email.isNotEmpty)
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                dense: true,
+                leading: const Icon(Icons.email_outlined),
+                title: Text(email),
+                trailing: const Icon(Icons.send, size: 18),
+                onTap: () => openEmail(email),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Visitas en sitio (staff): acciones de check-in/out + acta y el historial de
+/// visitas con su acta PDF.
+class _VisitsSection extends StatelessWidget {
+  const _VisitsSection({
+    required this.visits,
+    required this.ticketClosed,
+    required this.onCheckIn,
+    required this.onCheckOut,
+    required this.onServiceReport,
+  });
+
+  final List<TicketVisit> visits;
+  final bool ticketClosed;
+  final VoidCallback onCheckIn;
+  final VoidCallback onCheckOut;
+  final VoidCallback onServiceReport;
+
+  static final _dateFormat = DateFormat('dd MMM · HH:mm', 'es');
+
+  @override
+  Widget build(BuildContext context) {
+    // Visita abierta = con check-in pero sin check-out.
+    TicketVisit? open;
+    for (final v in visits) {
+      if (v.checkinAt != null && v.checkoutAt == null) {
+        open = v;
+        break;
+      }
+    }
+    final completed =
+        visits.where((v) => v.checkoutAt != null).toList(growable: false);
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(Icons.assignment_outlined, size: 18),
+                const SizedBox(width: 8),
+                Text('Visitas en sitio',
+                    style: Theme.of(context).textTheme.titleMedium),
+              ],
+            ),
+            const SizedBox(height: 12),
+            if (open != null) ...[
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.green.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.green),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.location_on, color: Colors.green, size: 18),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        open.checkinAt != null
+                            ? 'En sitio desde ${_dateFormat.format(open.checkinAt!.toLocal())}'
+                            : 'Visita en curso',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      icon: const Icon(Icons.description_outlined, size: 18),
+                      label: const Text('Acta'),
+                      onPressed: onServiceReport,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: FilledButton.icon(
+                      icon: const Icon(Icons.logout, size: 18),
+                      label: const Text('Check-out'),
+                      onPressed: onCheckOut,
+                    ),
+                  ),
+                ],
+              ),
+            ] else if (!ticketClosed)
+              FilledButton.tonalIcon(
+                icon: const Icon(Icons.login),
+                label: const Text('Registrar llegada (check-in)'),
+                onPressed: onCheckIn,
+              ),
+            if (completed.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              const Divider(),
+              for (final v in completed) _VisitTile(visit: v),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _VisitTile extends StatelessWidget {
+  const _VisitTile({required this.visit});
+
+  final TicketVisit visit;
+
+  static final _dateFormat = DateFormat('dd MMM yyyy · HH:mm', 'es');
+
+  @override
+  Widget build(BuildContext context) {
+    final checkin = visit.checkinAt?.toLocal();
+    final checkout = visit.checkoutAt?.toLocal();
+    final pdfUrl = visit.reportPdfUrl;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.check_circle_outline,
+                  size: 16, color: Colors.green),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  [
+                    if (checkin != null) _dateFormat.format(checkin),
+                    if (checkout != null) '→ ${DateFormat('HH:mm').format(checkout)}',
+                    if (visit.durationMinutes != null)
+                      '(${visit.durationMinutes}min)',
+                  ].join(' '),
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ),
+            ],
+          ),
+          if (visit.technicianName != null)
+            Padding(
+              padding: const EdgeInsets.only(left: 22, top: 2),
+              child: Text('Técnico: ${visit.technicianName}',
+                  style: Theme.of(context).textTheme.bodySmall),
+            ),
+          if (visit.workDone != null && visit.workDone!.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(left: 22, top: 4),
+              child: Text(visit.workDone!),
+            ),
+          Padding(
+            padding: const EdgeInsets.only(left: 14, top: 4),
+            child: Row(
+              children: [
+                if (visit.signatureUrl != null)
+                  const Padding(
+                    padding: EdgeInsets.only(right: 8),
+                    child: Icon(Icons.draw_outlined,
+                        size: 16, color: Colors.grey),
+                  ),
+                if (pdfUrl != null && pdfUrl.isNotEmpty)
+                  TextButton.icon(
+                    icon: const Icon(Icons.picture_as_pdf_outlined, size: 18),
+                    label: const Text('Ver acta (PDF)'),
+                    onPressed: () async {
+                      final ok = await openWebUrl(pdfUrl);
+                      if (!ok && context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('No se pudo abrir el acta.'),
+                          ),
+                        );
+                      }
+                    },
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Cotización del ticket: importes y estado. Staff puede crearla; el cliente
+/// puede aprobar/rechazar mientras esté pendiente.
+class _QuoteCard extends StatelessWidget {
+  const _QuoteCard({
+    required this.quote,
+    required this.isStaff,
+    required this.ticketClosed,
+    required this.onCreate,
+    required this.onApprove,
+    required this.onReject,
+  });
+
+  final TicketQuote? quote;
+  final bool isStaff;
+  final bool ticketClosed;
+  final VoidCallback onCreate;
+  final VoidCallback onApprove;
+  final VoidCallback onReject;
+
+  String _money(double? v, String? currency) {
+    final symbol = currency == 'USD' ? '\$' : 'S/';
+    return '$symbol ${(v ?? 0).toStringAsFixed(2)}';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final q = quote;
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(Icons.request_quote_outlined, size: 18),
+                const SizedBox(width: 8),
+                Text('Cotización',
+                    style: Theme.of(context).textTheme.titleMedium),
+                const Spacer(),
+                if (q?.status != null)
+                  StatusChip(label: q!.status!.label, color: q.status!.color),
+              ],
+            ),
+            if (q == null) ...[
+              const SizedBox(height: 8),
+              Text('Sin cotización registrada.',
+                  style: Theme.of(context).textTheme.bodySmall),
+              if (isStaff && !ticketClosed) ...[
+                const SizedBox(height: 8),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: FilledButton.tonalIcon(
+                    icon: const Icon(Icons.add),
+                    label: const Text('Crear cotización'),
+                    onPressed: onCreate,
+                  ),
+                ),
+              ],
+            ] else ...[
+              const SizedBox(height: 12),
+              _row(context, 'Mano de obra', _money(q.laborCost, q.currency)),
+              _row(context, 'Repuestos', _money(q.partsCost, q.currency)),
+              const Divider(),
+              _row(context, 'Total', _money(q.total, q.currency), bold: true),
+              if (q.note != null && q.note!.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                Text('"${q.note}"',
+                    style: const TextStyle(fontStyle: FontStyle.italic)),
+              ],
+              if (!isStaff && q.status == TicketQuoteStatusEnum.pendiente) ...[
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: onReject,
+                        child: const Text('Rechazar'),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: FilledButton(
+                        onPressed: onApprove,
+                        child: const Text('Aprobar'),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _row(BuildContext context, String label, String value,
+      {bool bold = false}) {
+    final style = bold
+        ? Theme.of(context).textTheme.titleMedium
+        : Theme.of(context).textTheme.bodyMedium;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: style),
+          Text(value, style: style),
+        ],
+      ),
+    );
+  }
+}
+
+/// Repuestos consumidos en el ticket (staff): lista con costo y opción de
+/// quitar, más el botón para registrar consumo desde inventario.
+class _PartsSection extends StatelessWidget {
+  const _PartsSection({
+    required this.parts,
+    required this.ticketClosed,
+    required this.onAdd,
+    required this.onRemove,
+  });
+
+  final List<TicketPart> parts;
+  final bool ticketClosed;
+  final VoidCallback onAdd;
+  final ValueChanged<int> onRemove;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(Icons.handyman_outlined, size: 18),
+                const SizedBox(width: 8),
+                Text('Repuestos',
+                    style: Theme.of(context).textTheme.titleMedium),
+                const Spacer(),
+                if (!ticketClosed)
+                  TextButton.icon(
+                    icon: const Icon(Icons.add, size: 18),
+                    label: const Text('Agregar'),
+                    onPressed: onAdd,
+                  ),
+              ],
+            ),
+            if (parts.isEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: Text('Sin repuestos registrados.',
+                    style: Theme.of(context).textTheme.bodySmall),
+              )
+            else
+              for (final p in parts)
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  dense: true,
+                  title: Text(p.productName ?? 'Repuesto'),
+                  subtitle: Text(
+                    [
+                      if (p.sku != null) p.sku!,
+                      'x${p.quantity ?? 1}',
+                      if (p.unitCost != null)
+                        'S/ ${p.unitCost!.toStringAsFixed(2)}',
+                    ].join(' · '),
+                  ),
+                  trailing: (ticketClosed || p.id == null)
+                      ? null
+                      : IconButton(
+                          icon: const Icon(Icons.delete_outline),
+                          tooltip: 'Quitar',
+                          onPressed: () => onRemove(p.id!),
+                        ),
+                ),
           ],
         ),
       ),

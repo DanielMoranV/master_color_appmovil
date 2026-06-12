@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mastercolor_api/mastercolor_api.dart';
 
 import '../../core/network/api_exception.dart';
+import '../addresses/addresses_repository.dart';
 import '../units/units_controller.dart';
 import 'ticket_presentation.dart';
 import 'tickets_controller.dart';
@@ -25,7 +26,10 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
   final _description = TextEditingController();
   TicketCategory _category = TicketCategory.consulta;
   TicketPriority _priority = TicketPriority.media;
+  TicketCreateRequestServiceTypeEnum _serviceType =
+      TicketCreateRequestServiceTypeEnum.remoto;
   int? _soldUnitId;
+  int? _serviceAddressId;
   bool _submitting = false;
 
   @override
@@ -43,6 +47,16 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate() || _submitting) return;
+    // Para servicio a domicilio, la dirección es obligatoria.
+    if (_serviceType == TicketCreateRequestServiceTypeEnum.domicilio &&
+        _serviceAddressId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Selecciona la dirección para el servicio a domicilio.'),
+        ),
+      );
+      return;
+    }
     setState(() => _submitting = true);
     try {
       await ref.read(ticketsRepositoryProvider).create(
@@ -51,6 +65,11 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
             priority: _priority,
             subject: _subject.text.trim(),
             description: _description.text.trim(),
+            serviceType: _serviceType,
+            serviceAddressId:
+                _serviceType == TicketCreateRequestServiceTypeEnum.domicilio
+                    ? _serviceAddressId
+                    : null,
           );
       ref.read(ticketsControllerProvider.notifier).refresh();
       if (mounted) {
@@ -114,6 +133,31 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
               ],
               onChanged: (v) => setState(() => _priority = v ?? _priority),
             ),
+            const SizedBox(height: 16),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text('Tipo de servicio',
+                  style: Theme.of(context).textTheme.labelLarge),
+            ),
+            const SizedBox(height: 8),
+            SegmentedButton<TicketCreateRequestServiceTypeEnum>(
+              segments: [
+                for (final t in TicketCreateRequestServiceTypeEnum.values)
+                  ButtonSegment(value: t, label: Text(t.label)),
+              ],
+              selected: {_serviceType},
+              showSelectedIcon: false,
+              onSelectionChanged: (s) =>
+                  setState(() => _serviceType = s.first),
+            ),
+            if (_serviceType ==
+                TicketCreateRequestServiceTypeEnum.domicilio) ...[
+              const SizedBox(height: 16),
+              _AddressSelector(
+                selectedId: _serviceAddressId,
+                onChanged: (id) => setState(() => _serviceAddressId = id),
+              ),
+            ],
             const SizedBox(height: 16),
             TextFormField(
               controller: _subject,
@@ -208,6 +252,87 @@ class _UnitSelector extends ConsumerWidget {
                 value: u.id,
                 child: Text(
                   u.productName ?? 'Unidad #${u.id ?? '—'}',
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+          ],
+          onChanged: onChanged,
+        );
+      },
+    );
+  }
+}
+
+/// Selector de la dirección a la que irá el técnico (servicio a domicilio).
+/// Las direcciones se gestionan fuera de la app (el contrato solo las lista).
+class _AddressSelector extends ConsumerWidget {
+  const _AddressSelector({required this.selectedId, required this.onChanged});
+
+  final int? selectedId;
+  final ValueChanged<int?> onChanged;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final addressesAsync = ref.watch(clientAddressesProvider);
+    return addressesAsync.when(
+      loading: () => const InputDecorator(
+        decoration: InputDecoration(
+          labelText: 'Dirección del servicio',
+          border: OutlineInputBorder(),
+        ),
+        child: Row(
+          children: [
+            SizedBox(
+              height: 16,
+              width: 16,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+            SizedBox(width: 12),
+            Text('Cargando direcciones…'),
+          ],
+        ),
+      ),
+      error: (e, _) => InputDecorator(
+        decoration: const InputDecoration(
+          labelText: 'Dirección del servicio',
+          border: OutlineInputBorder(),
+        ),
+        child: Row(
+          children: [
+            const Expanded(child: Text('No se pudieron cargar las direcciones.')),
+            TextButton(
+              onPressed: () => ref.invalidate(clientAddressesProvider),
+              child: const Text('Reintentar'),
+            ),
+          ],
+        ),
+      ),
+      data: (addresses) {
+        if (addresses.isEmpty) {
+          return const InputDecorator(
+            decoration: InputDecoration(
+              labelText: 'Dirección del servicio',
+              border: OutlineInputBorder(),
+            ),
+            child: Text('No tienes direcciones registradas.'),
+          );
+        }
+        final hasSelected = addresses.any((a) => a.id == selectedId);
+        return DropdownButtonFormField<int?>(
+          initialValue: hasSelected ? selectedId : null,
+          isExpanded: true,
+          decoration: const InputDecoration(
+            labelText: 'Dirección del servicio',
+            helperText: 'A dónde irá el técnico.',
+            border: OutlineInputBorder(),
+          ),
+          validator: (v) => v == null ? 'Selecciona una dirección' : null,
+          items: [
+            for (final a in addresses)
+              DropdownMenuItem<int?>(
+                value: a.id,
+                child: Text(
+                  a.addressFull ?? 'Dirección #${a.id ?? '—'}',
                   overflow: TextOverflow.ellipsis,
                 ),
               ),

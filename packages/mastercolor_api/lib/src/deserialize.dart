@@ -1,7 +1,9 @@
+import 'package:mastercolor_api/src/model/address.dart';
 import 'package:mastercolor_api/src/model/api_error.dart';
 import 'package:mastercolor_api/src/model/api_success.dart';
 import 'package:mastercolor_api/src/model/auth_me_get200_response.dart';
 import 'package:mastercolor_api/src/model/auth_me_get200_response_all_of_data.dart';
+import 'package:mastercolor_api/src/model/client_addresses_get200_response.dart';
 import 'package:mastercolor_api/src/model/client_auth_me_get200_response.dart';
 import 'package:mastercolor_api/src/model/client_auth_me_get200_response_all_of_data.dart';
 import 'package:mastercolor_api/src/model/client_product.dart';
@@ -22,6 +24,9 @@ import 'package:mastercolor_api/src/model/client_user.dart';
 import 'package:mastercolor_api/src/model/device_token_request.dart';
 import 'package:mastercolor_api/src/model/diagnosis_request.dart';
 import 'package:mastercolor_api/src/model/pagination.dart';
+import 'package:mastercolor_api/src/model/service_history_event.dart';
+import 'package:mastercolor_api/src/model/service_report_request.dart';
+import 'package:mastercolor_api/src/model/service_report_request_parts_inner.dart';
 import 'package:mastercolor_api/src/model/sold_unit.dart';
 import 'package:mastercolor_api/src/model/sold_unit_detail.dart';
 import 'package:mastercolor_api/src/model/staff_user.dart';
@@ -29,19 +34,36 @@ import 'package:mastercolor_api/src/model/staff_user_role.dart';
 import 'package:mastercolor_api/src/model/support_metrics.dart';
 import 'package:mastercolor_api/src/model/support_metrics_by_technician_inner.dart';
 import 'package:mastercolor_api/src/model/support_metrics_get200_response.dart';
+import 'package:mastercolor_api/src/model/support_parts_get200_response.dart';
+import 'package:mastercolor_api/src/model/support_parts_get200_response_all_of_data_inner.dart';
 import 'package:mastercolor_api/src/model/support_technicians_get200_response.dart';
+import 'package:mastercolor_api/src/model/support_technicians_me_patch200_response.dart';
 import 'package:mastercolor_api/src/model/support_ticket.dart';
+import 'package:mastercolor_api/src/model/support_ticket_client.dart';
 import 'package:mastercolor_api/src/model/support_ticket_detail.dart';
+import 'package:mastercolor_api/src/model/support_tickets_agenda_get200_response.dart';
 import 'package:mastercolor_api/src/model/support_tickets_id_assign_patch_request.dart';
+import 'package:mastercolor_api/src/model/support_tickets_id_check_in_post201_response.dart';
 import 'package:mastercolor_api/src/model/support_tickets_id_messages_post_request.dart';
+import 'package:mastercolor_api/src/model/support_tickets_id_parts_post201_response.dart';
 import 'package:mastercolor_api/src/model/support_tickets_id_status_patch_request.dart';
+import 'package:mastercolor_api/src/model/support_units_id_history_get200_response.dart';
+import 'package:mastercolor_api/src/model/support_units_id_history_get200_response_all_of_data.dart';
 import 'package:mastercolor_api/src/model/support_units_id_patch_request.dart';
 import 'package:mastercolor_api/src/model/technician.dart';
+import 'package:mastercolor_api/src/model/technician_profile_request.dart';
 import 'package:mastercolor_api/src/model/ticket_attachment.dart';
 import 'package:mastercolor_api/src/model/ticket_create_request.dart';
 import 'package:mastercolor_api/src/model/ticket_message.dart';
+import 'package:mastercolor_api/src/model/ticket_part.dart';
+import 'package:mastercolor_api/src/model/ticket_part_add_request.dart';
+import 'package:mastercolor_api/src/model/ticket_quote.dart';
+import 'package:mastercolor_api/src/model/ticket_quote_create_request.dart';
+import 'package:mastercolor_api/src/model/ticket_schedule_request.dart';
 import 'package:mastercolor_api/src/model/ticket_status_history.dart';
+import 'package:mastercolor_api/src/model/ticket_visit.dart';
 import 'package:mastercolor_api/src/model/validation_error.dart';
+import 'package:mastercolor_api/src/model/visit_check_request.dart';
 import 'package:mastercolor_api/src/model/warranty.dart';
 
 final _regList = RegExp(r'^List<(.*)>$');
@@ -62,6 +84,8 @@ final _regMap = RegExp(r'^Map<String,(.*)>$');
           return (valueString == 'true' || valueString == '1') as ReturnType;
         case 'double':
           return (value is double ? value : double.parse('$value')) as ReturnType;
+        case 'Address':
+          return Address.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'ApiError':
           return ApiError.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'ApiSuccess':
@@ -73,6 +97,8 @@ final _regMap = RegExp(r'^Map<String,(.*)>$');
         case 'AuthorType':
           
           
+        case 'ClientAddressesGet200Response':
+          return ClientAddressesGet200Response.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'ClientAuthMeGet200Response':
           return ClientAuthMeGet200Response.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'ClientAuthMeGet200ResponseAllOfData':
@@ -116,6 +142,12 @@ final _regMap = RegExp(r'^Map<String,(.*)>$');
           return DiagnosisRequest.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'Pagination':
           return Pagination.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'ServiceHistoryEvent':
+          return ServiceHistoryEvent.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'ServiceReportRequest':
+          return ServiceReportRequest.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'ServiceReportRequestPartsInner':
+          return ServiceReportRequestPartsInner.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'SoldUnit':
           return SoldUnit.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'SoldUnitDetail':
@@ -133,22 +165,42 @@ final _regMap = RegExp(r'^Map<String,(.*)>$');
           return SupportMetricsByTechnicianInner.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'SupportMetricsGet200Response':
           return SupportMetricsGet200Response.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'SupportPartsGet200Response':
+          return SupportPartsGet200Response.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'SupportPartsGet200ResponseAllOfDataInner':
+          return SupportPartsGet200ResponseAllOfDataInner.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'SupportTechniciansGet200Response':
           return SupportTechniciansGet200Response.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'SupportTechniciansMePatch200Response':
+          return SupportTechniciansMePatch200Response.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'SupportTicket':
           return SupportTicket.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'SupportTicketClient':
+          return SupportTicketClient.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'SupportTicketDetail':
           return SupportTicketDetail.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'SupportTicketsAgendaGet200Response':
+          return SupportTicketsAgendaGet200Response.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'SupportTicketsIdAssignPatchRequest':
           return SupportTicketsIdAssignPatchRequest.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'SupportTicketsIdCheckInPost201Response':
+          return SupportTicketsIdCheckInPost201Response.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'SupportTicketsIdMessagesPostRequest':
           return SupportTicketsIdMessagesPostRequest.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'SupportTicketsIdPartsPost201Response':
+          return SupportTicketsIdPartsPost201Response.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'SupportTicketsIdStatusPatchRequest':
           return SupportTicketsIdStatusPatchRequest.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'SupportUnitsIdHistoryGet200Response':
+          return SupportUnitsIdHistoryGet200Response.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'SupportUnitsIdHistoryGet200ResponseAllOfData':
+          return SupportUnitsIdHistoryGet200ResponseAllOfData.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'SupportUnitsIdPatchRequest':
           return SupportUnitsIdPatchRequest.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'Technician':
           return Technician.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'TechnicianProfileRequest':
+          return TechnicianProfileRequest.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'TicketAttachment':
           return TicketAttachment.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'TicketCategory':
@@ -161,16 +213,30 @@ final _regMap = RegExp(r'^Map<String,(.*)>$');
           return TicketCreateRequest.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'TicketMessage':
           return TicketMessage.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'TicketPart':
+          return TicketPart.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'TicketPartAddRequest':
+          return TicketPartAddRequest.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'TicketPriority':
           
           
+        case 'TicketQuote':
+          return TicketQuote.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'TicketQuoteCreateRequest':
+          return TicketQuoteCreateRequest.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'TicketScheduleRequest':
+          return TicketScheduleRequest.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'TicketStatus':
           
           
         case 'TicketStatusHistory':
           return TicketStatusHistory.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'TicketVisit':
+          return TicketVisit.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'ValidationError':
           return ValidationError.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'VisitCheckRequest':
+          return VisitCheckRequest.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'Warranty':
           return Warranty.fromJson(value as Map<String, dynamic>) as ReturnType;
         default:

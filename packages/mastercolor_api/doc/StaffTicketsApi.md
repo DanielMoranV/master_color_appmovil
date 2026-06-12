@@ -9,15 +9,62 @@ All URIs are relative to *http://localhost:8000/api*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
+[**supportTicketsAgendaGet**](StaffTicketsApi.md#supportticketsagendaget) | **GET** /support/tickets/agenda | Agenda del técnico autenticado
 [**supportTicketsGet**](StaffTicketsApi.md#supportticketsget) | **GET** /support/tickets | Listar/filtrar tickets (cola de soporte)
 [**supportTicketsIdAssignPatch**](StaffTicketsApi.md#supportticketsidassignpatch) | **PATCH** /support/tickets/{id}/assign | Asignar el ticket a un técnico
 [**supportTicketsIdAttachmentsPost**](StaffTicketsApi.md#supportticketsidattachmentspost) | **POST** /support/tickets/{id}/attachments | Adjuntar evidencia al ticket (foto de diagnóstico, etc.)
 [**supportTicketsIdDiagnosisPost**](StaffTicketsApi.md#supportticketsiddiagnosispost) | **POST** /support/tickets/{id}/diagnosis | Registrar diagnóstico técnico y cierre de servicio
 [**supportTicketsIdGet**](StaffTicketsApi.md#supportticketsidget) | **GET** /support/tickets/{id} | Detalle completo del ticket (incluye notas internas)
 [**supportTicketsIdMessagesPost**](StaffTicketsApi.md#supportticketsidmessagespost) | **POST** /support/tickets/{id}/messages | Responder o agregar nota interna
+[**supportTicketsIdQuotePost**](StaffTicketsApi.md#supportticketsidquotepost) | **POST** /support/tickets/{id}/quote | Crear presupuesto (servicio fuera de garantía)
+[**supportTicketsIdSchedulePatch**](StaffTicketsApi.md#supportticketsidschedulepatch) | **PATCH** /support/tickets/{id}/schedule | Programar/reprogramar la visita
 [**supportTicketsIdStatusPatch**](StaffTicketsApi.md#supportticketsidstatuspatch) | **PATCH** /support/tickets/{id}/status | Cambiar el estado del ticket
 [**supportTicketsMineGet**](StaffTicketsApi.md#supportticketsmineget) | **GET** /support/tickets/mine | Tickets asignados al técnico autenticado
+[**supportTicketsSlaGet**](StaffTicketsApi.md#supportticketsslaget) | **GET** /support/tickets/sla | Tickets por SLA (vencidos o por vencer)
 
+
+# **supportTicketsAgendaGet**
+> SupportTicketsAgendaGet200Response supportTicketsAgendaGet(date)
+
+Agenda del técnico autenticado
+
+Tickets con visita programada en la fecha indicada (default hoy), ordenados por hora, con cliente y dirección.
+
+### Example
+```dart
+import 'package:mastercolor_api/api.dart';
+
+final api = MastercolorApi().getStaffTicketsApi();
+final DateTime date = 2013-10-20; // DateTime | Fecha (YYYY-MM-DD). Default hoy.
+
+try {
+    final response = api.supportTicketsAgendaGet(date);
+    print(response);
+} on DioException catch (e) {
+    print('Exception when calling StaffTicketsApi->supportTicketsAgendaGet: $e\n');
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **date** | **DateTime**| Fecha (YYYY-MM-DD). Default hoy. | [optional] 
+
+### Return type
+
+[**SupportTicketsAgendaGet200Response**](SupportTicketsAgendaGet200Response.md)
+
+### Authorization
+
+[staffAuth](../README.md#staffAuth)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **supportTicketsGet**
 > ClientSupportTicketsGet200Response supportTicketsGet(page, perPage, status, priority, category, assignedUserId, clientId, search)
@@ -289,6 +336,94 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **supportTicketsIdQuotePost**
+> ClientSupportTicketsIdGet200Response supportTicketsIdQuotePost(id, ticketQuoteCreateRequest)
+
+Crear presupuesto (servicio fuera de garantía)
+
+Crea la cotización y deja el ticket en 'en_espera_aprobacion'.
+
+### Example
+```dart
+import 'package:mastercolor_api/api.dart';
+
+final api = MastercolorApi().getStaffTicketsApi();
+final int id = 56; // int | 
+final TicketQuoteCreateRequest ticketQuoteCreateRequest = ; // TicketQuoteCreateRequest | 
+
+try {
+    final response = api.supportTicketsIdQuotePost(id, ticketQuoteCreateRequest);
+    print(response);
+} on DioException catch (e) {
+    print('Exception when calling StaffTicketsApi->supportTicketsIdQuotePost: $e\n');
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **id** | **int**|  | 
+ **ticketQuoteCreateRequest** | [**TicketQuoteCreateRequest**](TicketQuoteCreateRequest.md)|  | 
+
+### Return type
+
+[**ClientSupportTicketsIdGet200Response**](ClientSupportTicketsIdGet200Response.md)
+
+### Authorization
+
+[staffAuth](../README.md#staffAuth)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **supportTicketsIdSchedulePatch**
+> ClientSupportTicketsPost201Response supportTicketsIdSchedulePatch(id, ticketScheduleRequest)
+
+Programar/reprogramar la visita
+
+### Example
+```dart
+import 'package:mastercolor_api/api.dart';
+
+final api = MastercolorApi().getStaffTicketsApi();
+final int id = 56; // int | 
+final TicketScheduleRequest ticketScheduleRequest = ; // TicketScheduleRequest | 
+
+try {
+    final response = api.supportTicketsIdSchedulePatch(id, ticketScheduleRequest);
+    print(response);
+} on DioException catch (e) {
+    print('Exception when calling StaffTicketsApi->supportTicketsIdSchedulePatch: $e\n');
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **id** | **int**|  | 
+ **ticketScheduleRequest** | [**TicketScheduleRequest**](TicketScheduleRequest.md)|  | 
+
+### Return type
+
+[**ClientSupportTicketsPost201Response**](ClientSupportTicketsPost201Response.md)
+
+### Authorization
+
+[staffAuth](../README.md#staffAuth)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 # **supportTicketsIdStatusPatch**
 > ClientSupportTicketsPost201Response supportTicketsIdStatusPatch(id, supportTicketsIdStatusPatchRequest)
 
@@ -359,6 +494,53 @@ try {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **status** | [**TicketStatus**](.md)|  | [optional] 
+
+### Return type
+
+[**ClientSupportTicketsGet200Response**](ClientSupportTicketsGet200Response.md)
+
+### Authorization
+
+[staffAuth](../README.md#staffAuth)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **supportTicketsSlaGet**
+> ClientSupportTicketsGet200Response supportTicketsSlaGet(page, perPage, filter)
+
+Tickets por SLA (vencidos o por vencer)
+
+Lista paginada de tickets abiertos cuyo SLA está vencido o próximo a vencer, ordenados por `sla_due_at` ascendente (escalamiento).
+
+### Example
+```dart
+import 'package:mastercolor_api/api.dart';
+
+final api = MastercolorApi().getStaffTicketsApi();
+final int page = 56; // int | 
+final int perPage = 56; // int | 
+final String filter = filter_example; // String | breached (vencidos) | due_soon (por vencer) | all (ambos, default).
+
+try {
+    final response = api.supportTicketsSlaGet(page, perPage, filter);
+    print(response);
+} on DioException catch (e) {
+    print('Exception when calling StaffTicketsApi->supportTicketsSlaGet: $e\n');
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **page** | **int**|  | [optional] [default to 1]
+ **perPage** | **int**|  | [optional] [default to 15]
+ **filter** | **String**| breached (vencidos) | due_soon (por vencer) | all (ambos, default). | [optional] [default to 'all']
 
 ### Return type
 

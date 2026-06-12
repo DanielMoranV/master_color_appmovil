@@ -11,6 +11,7 @@ Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**supportUnitsGet**](StaffUnidadesApi.md#supportunitsget) | **GET** /support/units | Buscar unidades vendidas
 [**supportUnitsIdGet**](StaffUnidadesApi.md#supportunitsidget) | **GET** /support/units/{id} | Detalle de una unidad (con historial de tickets)
+[**supportUnitsIdHistoryGet**](StaffUnidadesApi.md#supportunitsidhistoryget) | **GET** /support/units/{id}/history | Historial de servicio del equipo
 [**supportUnitsIdPatch**](StaffUnidadesApi.md#supportunitsidpatch) | **PATCH** /support/units/{id} | Actualizar una unidad (asignar nº de serie / estado)
 
 
@@ -92,6 +93,49 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**ClientUnitsIdGet200Response**](ClientUnitsIdGet200Response.md)
+
+### Authorization
+
+[staffAuth](../README.md#staffAuth)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **supportUnitsIdHistoryGet**
+> SupportUnitsIdHistoryGet200Response supportUnitsIdHistoryGet(id)
+
+Historial de servicio del equipo
+
+Línea de tiempo cronológica (más reciente primero) de aperturas de ticket, visitas y diagnósticos/resoluciones de la unidad.
+
+### Example
+```dart
+import 'package:mastercolor_api/api.dart';
+
+final api = MastercolorApi().getStaffUnidadesApi();
+final int id = 56; // int | 
+
+try {
+    final response = api.supportUnitsIdHistoryGet(id);
+    print(response);
+} on DioException catch (e) {
+    print('Exception when calling StaffUnidadesApi->supportUnitsIdHistoryGet: $e\n');
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **id** | **int**|  | 
+
+### Return type
+
+[**SupportUnitsIdHistoryGet200Response**](SupportUnitsIdHistoryGet200Response.md)
 
 ### Authorization
 

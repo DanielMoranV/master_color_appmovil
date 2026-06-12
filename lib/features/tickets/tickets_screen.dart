@@ -370,6 +370,15 @@ class _TicketCard extends StatelessWidget {
                       ),
                     ),
                   const Spacer(),
+                  if (slaPresentation(ticket.slaStatus?.value) case final sla?)
+                    Padding(
+                      padding: const EdgeInsets.only(right: 6),
+                      child: StatusChip(
+                        label: sla.label,
+                        color: sla.color,
+                        icon: sla.icon,
+                      ),
+                    ),
                   if (ticket.status != null)
                     StatusChip(
                       label: ticket.status!.label,

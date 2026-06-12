@@ -41,6 +41,11 @@ class MetricsScreen extends ConsumerWidget {
             onPressed: () => _pickRange(context, controller),
           ),
           IconButton(
+            icon: const Icon(Icons.event_note_outlined),
+            tooltip: 'Mi agenda',
+            onPressed: () => context.go('/staff/agenda'),
+          ),
+          IconButton(
             icon: const Icon(Icons.inventory_2_outlined),
             tooltip: 'Unidades',
             onPressed: () => context.go('/staff/units'),
@@ -49,6 +54,11 @@ class MetricsScreen extends ConsumerWidget {
             icon: const Icon(Icons.confirmation_number_outlined),
             tooltip: 'Cola de tickets',
             onPressed: () => context.go('/staff/tickets'),
+          ),
+          IconButton(
+            icon: const Icon(Icons.badge_outlined),
+            tooltip: 'Mi perfil',
+            onPressed: () => context.go('/staff/profile'),
           ),
           IconButton(
             icon: const Icon(Icons.logout),
@@ -219,6 +229,7 @@ class _Dashboard extends StatelessWidget {
               value: '${metrics.slaBreached ?? 0}',
               icon: Icons.warning_amber_outlined,
               color: Colors.deepOrange,
+              onTap: () => context.go('/staff/sla'),
             ),
           ],
         ),
@@ -259,12 +270,14 @@ class _KpiCard extends StatelessWidget {
     required this.value,
     required this.icon,
     required this.color,
+    this.onTap,
   });
 
   final String label;
   final String value;
   final IconData icon;
   final Color color;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -273,20 +286,24 @@ class _KpiCard extends StatelessWidget {
     return SizedBox(
       width: width,
       child: Card(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(icon, color: color),
-              const SizedBox(height: 8),
-              Text(value, style: Theme.of(context).textTheme.headlineSmall),
-              const SizedBox(height: 2),
-              Text(label,
-                  style: Theme.of(context).textTheme.bodySmall,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis),
-            ],
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(icon, color: color),
+                const SizedBox(height: 8),
+                Text(value, style: Theme.of(context).textTheme.headlineSmall),
+                const SizedBox(height: 2),
+                Text(label,
+                    style: Theme.of(context).textTheme.bodySmall,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis),
+              ],
+            ),
           ),
         ),
       ),

@@ -31,6 +31,10 @@ class TicketCreateRequest {
     required  this.subject,
 
     required  this.description,
+
+     this.serviceType = const TicketCreateRequestServiceTypeEnum._('remoto'),
+
+     this.serviceAddressId,
   });
 
       /// Unidad asociada (opcional para consultas generales).
@@ -94,6 +98,32 @@ class TicketCreateRequest {
 
 
 
+      /// Tipo de servicio. Si es 'domicilio', service_address_id es obligatorio.
+  @JsonKey(
+    defaultValue: 'remoto',
+    name: r'service_type',
+    required: false,
+    includeIfNull: false,
+  )
+
+
+  final TicketCreateRequestServiceTypeEnum? serviceType;
+
+
+
+      /// Dirección del cliente a la que va el técnico (requerido si service_type=domicilio).
+  @JsonKey(
+    
+    name: r'service_address_id',
+    required: false,
+    includeIfNull: false,
+  )
+
+
+  final int? serviceAddressId;
+
+
+
 
 
     @override
@@ -102,7 +132,9 @@ class TicketCreateRequest {
       other.category == category &&
       other.priority == priority &&
       other.subject == subject &&
-      other.description == description;
+      other.description == description &&
+      other.serviceType == serviceType &&
+      other.serviceAddressId == serviceAddressId;
 
     @override
     int get hashCode =>
@@ -110,7 +142,9 @@ class TicketCreateRequest {
         category.hashCode +
         priority.hashCode +
         subject.hashCode +
-        description.hashCode;
+        description.hashCode +
+        serviceType.hashCode +
+        serviceAddressId.hashCode;
 
   factory TicketCreateRequest.fromJson(Map<String, dynamic> json) => _$TicketCreateRequestFromJson(json);
 
@@ -122,4 +156,25 @@ class TicketCreateRequest {
   }
 
 }
+
+/// Tipo de servicio. Si es 'domicilio', service_address_id es obligatorio.
+enum TicketCreateRequestServiceTypeEnum {
+    /// Tipo de servicio. Si es 'domicilio', service_address_id es obligatorio.
+@JsonValue(r'remoto')
+remoto(r'remoto'),
+    /// Tipo de servicio. Si es 'domicilio', service_address_id es obligatorio.
+@JsonValue(r'domicilio')
+domicilio(r'domicilio'),
+    /// Tipo de servicio. Si es 'domicilio', service_address_id es obligatorio.
+@JsonValue(r'taller')
+taller(r'taller');
+
+const TicketCreateRequestServiceTypeEnum(this.value);
+
+final String value;
+
+@override
+String toString() => value;
+}
+
 

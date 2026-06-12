@@ -73,8 +73,29 @@ class StaffUnitsRepository {
       throw ApiException.fromDio(e);
     }
   }
+
+  /// Historial de servicio de la unidad: línea de tiempo de eventos
+  /// (ticket_opened, visit, resolved), del más reciente al más antiguo.
+  Future<SupportUnitsIdHistoryGet200ResponseAllOfData> history(int id) async {
+    try {
+      final res = await _units.supportUnitsIdHistoryGet(id: id);
+      final data = res.data?.data;
+      if (data == null) {
+        throw ApiException('Sin historial para la unidad.', statusCode: 404);
+      }
+      return data;
+    } on DioException catch (e) {
+      throw ApiException.fromDio(e);
+    }
+  }
 }
 
 final staffUnitsRepositoryProvider = Provider<StaffUnitsRepository>((ref) {
   return StaffUnitsRepository(ref.watch(mastercolorApiProvider));
+});
+
+/// Historial de servicio de una unidad (solo staff), por id.
+final unitHistoryProvider = FutureProvider.autoDispose
+    .family<SupportUnitsIdHistoryGet200ResponseAllOfData, int>((ref, id) {
+  return ref.watch(staffUnitsRepositoryProvider).history(id);
 });

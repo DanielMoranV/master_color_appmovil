@@ -98,6 +98,7 @@ const _$TicketStatusEnumMap = {
   TicketStatus.asignado: 'asignado',
   TicketStatus.enProceso: 'en_proceso',
   TicketStatus.enEsperaCliente: 'en_espera_cliente',
+  TicketStatus.enEsperaAprobacion: 'en_espera_aprobacion',
   TicketStatus.resuelto: 'resuelto',
   TicketStatus.cerrado: 'cerrado',
   TicketStatus.cancelado: 'cancelado',

@@ -13,6 +13,8 @@ Method | HTTP request | Description
 [**clientSupportTicketsIdAttachmentsPost**](ClienteTicketsApi.md#clientsupportticketsidattachmentspost) | **POST** /client/support/tickets/{id}/attachments | Adjuntar archivos al ticket
 [**clientSupportTicketsIdGet**](ClienteTicketsApi.md#clientsupportticketsidget) | **GET** /client/support/tickets/{id} | Detalle de un ticket (con conversación)
 [**clientSupportTicketsIdMessagesPost**](ClienteTicketsApi.md#clientsupportticketsidmessagespost) | **POST** /client/support/tickets/{id}/messages | Enviar un mensaje en el ticket
+[**clientSupportTicketsIdQuoteApprovePost**](ClienteTicketsApi.md#clientsupportticketsidquoteapprovepost) | **POST** /client/support/tickets/{id}/quote/approve | Aprobar el presupuesto vigente
+[**clientSupportTicketsIdQuoteRejectPost**](ClienteTicketsApi.md#clientsupportticketsidquoterejectpost) | **POST** /client/support/tickets/{id}/quote/reject | Rechazar el presupuesto vigente
 [**clientSupportTicketsIdRatePost**](ClienteTicketsApi.md#clientsupportticketsidratepost) | **POST** /client/support/tickets/{id}/rate | Calificar la atención de un ticket resuelto
 [**clientSupportTicketsIdReopenPut**](ClienteTicketsApi.md#clientsupportticketsidreopenput) | **PUT** /client/support/tickets/{id}/reopen | Reabrir un ticket resuelto/cerrado
 [**clientSupportTicketsPost**](ClienteTicketsApi.md#clientsupportticketspost) | **POST** /client/support/tickets | Crear un ticket de soporte
@@ -188,6 +190,90 @@ Name | Type | Description  | Notes
 ### HTTP request headers
 
  - **Content-Type**: application/json
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **clientSupportTicketsIdQuoteApprovePost**
+> ClientSupportTicketsIdGet200Response clientSupportTicketsIdQuoteApprovePost(id)
+
+Aprobar el presupuesto vigente
+
+El cliente aprueba la cotización; el ticket vuelve a 'en_proceso'.
+
+### Example
+```dart
+import 'package:mastercolor_api/api.dart';
+
+final api = MastercolorApi().getClienteTicketsApi();
+final int id = 56; // int | 
+
+try {
+    final response = api.clientSupportTicketsIdQuoteApprovePost(id);
+    print(response);
+} on DioException catch (e) {
+    print('Exception when calling ClienteTicketsApi->clientSupportTicketsIdQuoteApprovePost: $e\n');
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **id** | **int**|  | 
+
+### Return type
+
+[**ClientSupportTicketsIdGet200Response**](ClientSupportTicketsIdGet200Response.md)
+
+### Authorization
+
+[clientAuth](../README.md#clientAuth)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **clientSupportTicketsIdQuoteRejectPost**
+> ClientSupportTicketsIdGet200Response clientSupportTicketsIdQuoteRejectPost(id)
+
+Rechazar el presupuesto vigente
+
+### Example
+```dart
+import 'package:mastercolor_api/api.dart';
+
+final api = MastercolorApi().getClienteTicketsApi();
+final int id = 56; // int | 
+
+try {
+    final response = api.clientSupportTicketsIdQuoteRejectPost(id);
+    print(response);
+} on DioException catch (e) {
+    print('Exception when calling ClienteTicketsApi->clientSupportTicketsIdQuoteRejectPost: $e\n');
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **id** | **int**|  | 
+
+### Return type
+
+[**ClientSupportTicketsIdGet200Response**](ClientSupportTicketsIdGet200Response.md)
+
+### Authorization
+
+[clientAuth](../README.md#clientAuth)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
  - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)

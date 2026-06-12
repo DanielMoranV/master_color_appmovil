@@ -29,6 +29,14 @@ abstract class _$SupportTicketCWProxy {
 
   SupportTicket channel(TicketChannel? channel);
 
+  SupportTicket serviceType(SupportTicketServiceTypeEnum? serviceType);
+
+  SupportTicket serviceAddressId(int? serviceAddressId);
+
+  SupportTicket scheduledAt(DateTime? scheduledAt);
+
+  SupportTicket scheduledWindowMinutes(int? scheduledWindowMinutes);
+
   SupportTicket assignedUserId(int? assignedUserId);
 
   SupportTicket assignedUserName(String? assignedUserName);
@@ -36,6 +44,8 @@ abstract class _$SupportTicketCWProxy {
   SupportTicket isWarrantyCovered(bool? isWarrantyCovered);
 
   SupportTicket slaDueAt(DateTime? slaDueAt);
+
+  SupportTicket slaStatus(SupportTicketSlaStatusEnum? slaStatus);
 
   SupportTicket firstResponseAt(DateTime? firstResponseAt);
 
@@ -45,9 +55,15 @@ abstract class _$SupportTicketCWProxy {
 
   SupportTicket rating(int? rating);
 
+  SupportTicket ratingComment(String? ratingComment);
+
   SupportTicket createdAt(DateTime? createdAt);
 
   SupportTicket updatedAt(DateTime? updatedAt);
+
+  SupportTicket client(SupportTicketClient? client);
+
+  SupportTicket serviceAddress(Address? serviceAddress);
 
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `SupportTicket(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
@@ -67,16 +83,24 @@ abstract class _$SupportTicketCWProxy {
     String? description,
     TicketStatus? status,
     TicketChannel? channel,
+    SupportTicketServiceTypeEnum? serviceType,
+    int? serviceAddressId,
+    DateTime? scheduledAt,
+    int? scheduledWindowMinutes,
     int? assignedUserId,
     String? assignedUserName,
     bool? isWarrantyCovered,
     DateTime? slaDueAt,
+    SupportTicketSlaStatusEnum? slaStatus,
     DateTime? firstResponseAt,
     DateTime? resolvedAt,
     DateTime? closedAt,
     int? rating,
+    String? ratingComment,
     DateTime? createdAt,
     DateTime? updatedAt,
+    SupportTicketClient? client,
+    Address? serviceAddress,
   });
 }
 
@@ -121,6 +145,22 @@ class _$SupportTicketCWProxyImpl implements _$SupportTicketCWProxy {
   SupportTicket channel(TicketChannel? channel) => this(channel: channel);
 
   @override
+  SupportTicket serviceType(SupportTicketServiceTypeEnum? serviceType) =>
+      this(serviceType: serviceType);
+
+  @override
+  SupportTicket serviceAddressId(int? serviceAddressId) =>
+      this(serviceAddressId: serviceAddressId);
+
+  @override
+  SupportTicket scheduledAt(DateTime? scheduledAt) =>
+      this(scheduledAt: scheduledAt);
+
+  @override
+  SupportTicket scheduledWindowMinutes(int? scheduledWindowMinutes) =>
+      this(scheduledWindowMinutes: scheduledWindowMinutes);
+
+  @override
   SupportTicket assignedUserId(int? assignedUserId) =>
       this(assignedUserId: assignedUserId);
 
@@ -134,6 +174,10 @@ class _$SupportTicketCWProxyImpl implements _$SupportTicketCWProxy {
 
   @override
   SupportTicket slaDueAt(DateTime? slaDueAt) => this(slaDueAt: slaDueAt);
+
+  @override
+  SupportTicket slaStatus(SupportTicketSlaStatusEnum? slaStatus) =>
+      this(slaStatus: slaStatus);
 
   @override
   SupportTicket firstResponseAt(DateTime? firstResponseAt) =>
@@ -150,10 +194,21 @@ class _$SupportTicketCWProxyImpl implements _$SupportTicketCWProxy {
   SupportTicket rating(int? rating) => this(rating: rating);
 
   @override
+  SupportTicket ratingComment(String? ratingComment) =>
+      this(ratingComment: ratingComment);
+
+  @override
   SupportTicket createdAt(DateTime? createdAt) => this(createdAt: createdAt);
 
   @override
   SupportTicket updatedAt(DateTime? updatedAt) => this(updatedAt: updatedAt);
+
+  @override
+  SupportTicket client(SupportTicketClient? client) => this(client: client);
+
+  @override
+  SupportTicket serviceAddress(Address? serviceAddress) =>
+      this(serviceAddress: serviceAddress);
 
   @override
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `SupportTicket(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
@@ -174,16 +229,24 @@ class _$SupportTicketCWProxyImpl implements _$SupportTicketCWProxy {
     Object? description = const $CopyWithPlaceholder(),
     Object? status = const $CopyWithPlaceholder(),
     Object? channel = const $CopyWithPlaceholder(),
+    Object? serviceType = const $CopyWithPlaceholder(),
+    Object? serviceAddressId = const $CopyWithPlaceholder(),
+    Object? scheduledAt = const $CopyWithPlaceholder(),
+    Object? scheduledWindowMinutes = const $CopyWithPlaceholder(),
     Object? assignedUserId = const $CopyWithPlaceholder(),
     Object? assignedUserName = const $CopyWithPlaceholder(),
     Object? isWarrantyCovered = const $CopyWithPlaceholder(),
     Object? slaDueAt = const $CopyWithPlaceholder(),
+    Object? slaStatus = const $CopyWithPlaceholder(),
     Object? firstResponseAt = const $CopyWithPlaceholder(),
     Object? resolvedAt = const $CopyWithPlaceholder(),
     Object? closedAt = const $CopyWithPlaceholder(),
     Object? rating = const $CopyWithPlaceholder(),
+    Object? ratingComment = const $CopyWithPlaceholder(),
     Object? createdAt = const $CopyWithPlaceholder(),
     Object? updatedAt = const $CopyWithPlaceholder(),
+    Object? client = const $CopyWithPlaceholder(),
+    Object? serviceAddress = const $CopyWithPlaceholder(),
   }) {
     return SupportTicket(
       id: id == const $CopyWithPlaceholder()
@@ -230,6 +293,23 @@ class _$SupportTicketCWProxyImpl implements _$SupportTicketCWProxy {
           ? _value.channel
           // ignore: cast_nullable_to_non_nullable
           : channel as TicketChannel?,
+      serviceType: serviceType == const $CopyWithPlaceholder()
+          ? _value.serviceType
+          // ignore: cast_nullable_to_non_nullable
+          : serviceType as SupportTicketServiceTypeEnum?,
+      serviceAddressId: serviceAddressId == const $CopyWithPlaceholder()
+          ? _value.serviceAddressId
+          // ignore: cast_nullable_to_non_nullable
+          : serviceAddressId as int?,
+      scheduledAt: scheduledAt == const $CopyWithPlaceholder()
+          ? _value.scheduledAt
+          // ignore: cast_nullable_to_non_nullable
+          : scheduledAt as DateTime?,
+      scheduledWindowMinutes:
+          scheduledWindowMinutes == const $CopyWithPlaceholder()
+          ? _value.scheduledWindowMinutes
+          // ignore: cast_nullable_to_non_nullable
+          : scheduledWindowMinutes as int?,
       assignedUserId: assignedUserId == const $CopyWithPlaceholder()
           ? _value.assignedUserId
           // ignore: cast_nullable_to_non_nullable
@@ -246,6 +326,10 @@ class _$SupportTicketCWProxyImpl implements _$SupportTicketCWProxy {
           ? _value.slaDueAt
           // ignore: cast_nullable_to_non_nullable
           : slaDueAt as DateTime?,
+      slaStatus: slaStatus == const $CopyWithPlaceholder()
+          ? _value.slaStatus
+          // ignore: cast_nullable_to_non_nullable
+          : slaStatus as SupportTicketSlaStatusEnum?,
       firstResponseAt: firstResponseAt == const $CopyWithPlaceholder()
           ? _value.firstResponseAt
           // ignore: cast_nullable_to_non_nullable
@@ -262,6 +346,10 @@ class _$SupportTicketCWProxyImpl implements _$SupportTicketCWProxy {
           ? _value.rating
           // ignore: cast_nullable_to_non_nullable
           : rating as int?,
+      ratingComment: ratingComment == const $CopyWithPlaceholder()
+          ? _value.ratingComment
+          // ignore: cast_nullable_to_non_nullable
+          : ratingComment as String?,
       createdAt: createdAt == const $CopyWithPlaceholder()
           ? _value.createdAt
           // ignore: cast_nullable_to_non_nullable
@@ -270,6 +358,14 @@ class _$SupportTicketCWProxyImpl implements _$SupportTicketCWProxy {
           ? _value.updatedAt
           // ignore: cast_nullable_to_non_nullable
           : updatedAt as DateTime?,
+      client: client == const $CopyWithPlaceholder()
+          ? _value.client
+          // ignore: cast_nullable_to_non_nullable
+          : client as SupportTicketClient?,
+      serviceAddress: serviceAddress == const $CopyWithPlaceholder()
+          ? _value.serviceAddress
+          // ignore: cast_nullable_to_non_nullable
+          : serviceAddress as Address?,
     );
   }
 }
@@ -316,6 +412,23 @@ SupportTicket _$SupportTicketFromJson(Map<String, dynamic> json) =>
             'channel',
             (v) => $enumDecodeNullable(_$TicketChannelEnumMap, v),
           ),
+          serviceType: $checkedConvert(
+            'service_type',
+            (v) =>
+                $enumDecodeNullable(_$SupportTicketServiceTypeEnumEnumMap, v),
+          ),
+          serviceAddressId: $checkedConvert(
+            'service_address_id',
+            (v) => (v as num?)?.toInt(),
+          ),
+          scheduledAt: $checkedConvert(
+            'scheduled_at',
+            (v) => v == null ? null : DateTime.parse(v as String),
+          ),
+          scheduledWindowMinutes: $checkedConvert(
+            'scheduled_window_minutes',
+            (v) => (v as num?)?.toInt(),
+          ),
           assignedUserId: $checkedConvert(
             'assigned_user_id',
             (v) => (v as num?)?.toInt(),
@@ -332,6 +445,10 @@ SupportTicket _$SupportTicketFromJson(Map<String, dynamic> json) =>
             'sla_due_at',
             (v) => v == null ? null : DateTime.parse(v as String),
           ),
+          slaStatus: $checkedConvert(
+            'sla_status',
+            (v) => $enumDecodeNullable(_$SupportTicketSlaStatusEnumEnumMap, v),
+          ),
           firstResponseAt: $checkedConvert(
             'first_response_at',
             (v) => v == null ? null : DateTime.parse(v as String),
@@ -345,6 +462,7 @@ SupportTicket _$SupportTicketFromJson(Map<String, dynamic> json) =>
             (v) => v == null ? null : DateTime.parse(v as String),
           ),
           rating: $checkedConvert('rating', (v) => (v as num?)?.toInt()),
+          ratingComment: $checkedConvert('rating_comment', (v) => v as String?),
           createdAt: $checkedConvert(
             'created_at',
             (v) => v == null ? null : DateTime.parse(v as String),
@@ -353,6 +471,17 @@ SupportTicket _$SupportTicketFromJson(Map<String, dynamic> json) =>
             'updated_at',
             (v) => v == null ? null : DateTime.parse(v as String),
           ),
+          client: $checkedConvert(
+            'client',
+            (v) => v == null
+                ? null
+                : SupportTicketClient.fromJson(v as Map<String, dynamic>),
+          ),
+          serviceAddress: $checkedConvert(
+            'service_address',
+            (v) =>
+                v == null ? null : Address.fromJson(v as Map<String, dynamic>),
+          ),
         );
         return val;
       },
@@ -360,42 +489,58 @@ SupportTicket _$SupportTicketFromJson(Map<String, dynamic> json) =>
         'clientId': 'client_id',
         'soldUnitId': 'sold_unit_id',
         'productId': 'product_id',
+        'serviceType': 'service_type',
+        'serviceAddressId': 'service_address_id',
+        'scheduledAt': 'scheduled_at',
+        'scheduledWindowMinutes': 'scheduled_window_minutes',
         'assignedUserId': 'assigned_user_id',
         'assignedUserName': 'assigned_user_name',
         'isWarrantyCovered': 'is_warranty_covered',
         'slaDueAt': 'sla_due_at',
+        'slaStatus': 'sla_status',
         'firstResponseAt': 'first_response_at',
         'resolvedAt': 'resolved_at',
         'closedAt': 'closed_at',
+        'ratingComment': 'rating_comment',
         'createdAt': 'created_at',
         'updatedAt': 'updated_at',
+        'serviceAddress': 'service_address',
       },
     );
 
-Map<String, dynamic> _$SupportTicketToJson(SupportTicket instance) =>
-    <String, dynamic>{
-      'id': ?instance.id,
-      'code': ?instance.code,
-      'client_id': ?instance.clientId,
-      'sold_unit_id': ?instance.soldUnitId,
-      'product_id': ?instance.productId,
-      'category': ?_$TicketCategoryEnumMap[instance.category],
-      'priority': ?_$TicketPriorityEnumMap[instance.priority],
-      'subject': ?instance.subject,
-      'description': ?instance.description,
-      'status': ?_$TicketStatusEnumMap[instance.status],
-      'channel': ?_$TicketChannelEnumMap[instance.channel],
-      'assigned_user_id': ?instance.assignedUserId,
-      'assigned_user_name': ?instance.assignedUserName,
-      'is_warranty_covered': ?instance.isWarrantyCovered,
-      'sla_due_at': ?instance.slaDueAt?.toIso8601String(),
-      'first_response_at': ?instance.firstResponseAt?.toIso8601String(),
-      'resolved_at': ?instance.resolvedAt?.toIso8601String(),
-      'closed_at': ?instance.closedAt?.toIso8601String(),
-      'rating': ?instance.rating,
-      'created_at': ?instance.createdAt?.toIso8601String(),
-      'updated_at': ?instance.updatedAt?.toIso8601String(),
-    };
+Map<String, dynamic> _$SupportTicketToJson(
+  SupportTicket instance,
+) => <String, dynamic>{
+  'id': ?instance.id,
+  'code': ?instance.code,
+  'client_id': ?instance.clientId,
+  'sold_unit_id': ?instance.soldUnitId,
+  'product_id': ?instance.productId,
+  'category': ?_$TicketCategoryEnumMap[instance.category],
+  'priority': ?_$TicketPriorityEnumMap[instance.priority],
+  'subject': ?instance.subject,
+  'description': ?instance.description,
+  'status': ?_$TicketStatusEnumMap[instance.status],
+  'channel': ?_$TicketChannelEnumMap[instance.channel],
+  'service_type': ?_$SupportTicketServiceTypeEnumEnumMap[instance.serviceType],
+  'service_address_id': ?instance.serviceAddressId,
+  'scheduled_at': ?instance.scheduledAt?.toIso8601String(),
+  'scheduled_window_minutes': ?instance.scheduledWindowMinutes,
+  'assigned_user_id': ?instance.assignedUserId,
+  'assigned_user_name': ?instance.assignedUserName,
+  'is_warranty_covered': ?instance.isWarrantyCovered,
+  'sla_due_at': ?instance.slaDueAt?.toIso8601String(),
+  'sla_status': ?_$SupportTicketSlaStatusEnumEnumMap[instance.slaStatus],
+  'first_response_at': ?instance.firstResponseAt?.toIso8601String(),
+  'resolved_at': ?instance.resolvedAt?.toIso8601String(),
+  'closed_at': ?instance.closedAt?.toIso8601String(),
+  'rating': ?instance.rating,
+  'rating_comment': ?instance.ratingComment,
+  'created_at': ?instance.createdAt?.toIso8601String(),
+  'updated_at': ?instance.updatedAt?.toIso8601String(),
+  'client': ?instance.client?.toJson(),
+  'service_address': ?instance.serviceAddress?.toJson(),
+};
 
 const _$TicketCategoryEnumMap = {
   TicketCategory.garantia: 'garantia',
@@ -417,6 +562,7 @@ const _$TicketStatusEnumMap = {
   TicketStatus.asignado: 'asignado',
   TicketStatus.enProceso: 'en_proceso',
   TicketStatus.enEsperaCliente: 'en_espera_cliente',
+  TicketStatus.enEsperaAprobacion: 'en_espera_aprobacion',
   TicketStatus.resuelto: 'resuelto',
   TicketStatus.cerrado: 'cerrado',
   TicketStatus.cancelado: 'cancelado',
@@ -426,4 +572,16 @@ const _$TicketChannelEnumMap = {
   TicketChannel.app: 'app',
   TicketChannel.web: 'web',
   TicketChannel.telefono: 'telefono',
+};
+
+const _$SupportTicketServiceTypeEnumEnumMap = {
+  SupportTicketServiceTypeEnum.remoto: 'remoto',
+  SupportTicketServiceTypeEnum.domicilio: 'domicilio',
+  SupportTicketServiceTypeEnum.taller: 'taller',
+};
+
+const _$SupportTicketSlaStatusEnumEnumMap = {
+  SupportTicketSlaStatusEnum.onTrack: 'on_track',
+  SupportTicketSlaStatusEnum.dueSoon: 'due_soon',
+  SupportTicketSlaStatusEnum.breached: 'breached',
 };
