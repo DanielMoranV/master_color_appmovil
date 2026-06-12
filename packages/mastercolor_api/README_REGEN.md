@@ -46,3 +46,15 @@ flutter pub get
   y `json_serializable` no puede generar `fromJson` para `MultipartFile` → falla el
   build_runner. Cambiar su anotación a `@JsonKey(ignore: true)` (igual que
   `clientSignatureFile`); las fotos viajan por multipart, no por JSON.
+- **Parche post-regen obligatorio** (`lib/src/model/ticket_create_request.dart` y
+  su `.g.dart`): el campo `serviceType` tiene valor por defecto `'remoto'`, pero el
+  generador emite un *enhanced enum* y a la vez referencia el constructor privado
+  estilo antiguo `const TicketCreateRequestServiceTypeEnum._('remoto')`, que no existe
+  → falla el build release con *"Enums can't be instantiated"*. Corregir:
+    - en `ticket_create_request.dart`, el default a
+      `TicketCreateRequestServiceTypeEnum.remoto`;
+    - en `ticket_create_request.g.dart`, el fallback `?? 'remoto'` a
+      `?? TicketCreateRequestServiceTypeEnum.remoto` (debe devolver el miembro del
+      enum, no el String).
+  Aplica a cualquier campo enum con valor por defecto; busca el patrón roto con
+  `grep -rn 'Enum\._(' lib/src/model/`.
